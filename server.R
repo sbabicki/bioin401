@@ -125,7 +125,7 @@ shinyServer(function(input, output,session) {
     
     # get the data matrix to convert to heatmap
     heatmapDataMatrix <- get_data_matrix()
-    heatmapDataMatrix <- data_analysis(heatmapDataMatrix)
+    # heatmapDataMatrix <- data_analysis(heatmapDataMatrix)
     colv <- get_colv()
     rowv <- get_rowv()
     dendrogram <- get_dendrogram()
@@ -141,11 +141,12 @@ shinyServer(function(input, output,session) {
               key=FALSE, symkey=FALSE, density.info="none", trace="none", 
               Rowv = rowv, Colv = colv, dendrogram = dendrogram, 
               hclustfun=function(c){
-                if(input$clusterMethod == "none" || input$clusterMethod == "kmeans")
+                if(input$clusterMethod == "none") # || input$clusterMethod == "kmeans")
                   return("none")
                 else
                   return(hclust(c, method=input$clusterMethod))
                 }, 
+              distfun = function(c){dist(c, method=input$distanceMethod)},
               keysize=0.5, cexRow=1, 
               main=input$imageTitle, xlab=input$xaxis, ylab=input$yaxis
               #lmat = rbind(c(0,3),c(2,1),c(0,4)),

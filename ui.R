@@ -3,8 +3,8 @@
 shinyUI(navbarPage(position = "fixed-top", theme = "bootstrap.css",
   title = "Heatmap App",
 
-  #################### Analysis Tab ####################
-  tabPanel("Analysis",  
+  #################### Analysis Tab ####################  
+  tabPanel("Herarchical Clustering",  
            
     ##########  Heatmap Plot Output ##########        
     conditionalPanel(condition = "input.display == 'heatmap'",
@@ -12,7 +12,7 @@ shinyUI(navbarPage(position = "fixed-top", theme = "bootstrap.css",
                     top = 0, left = 0, width="100%",
                     draggable = TRUE,
                     fixed = FALSE,
-                    plotOutput(outputId='heatmap', width= "100%"))),
+                    plotOutput(outputId='heatmap', width= "95%"))),
     
     ##########  Options Menu ##########   
     absolutePanel(style = "opacity: 0.92", id="dropdownMenu", 
@@ -44,29 +44,34 @@ shinyUI(navbarPage(position = "fixed-top", theme = "bootstrap.css",
             selectInput("clusterMethod", label = "Clustering Method", 
                         choices = list( 
                           "none" = 'none',
-                          "mcquitty" = 'mcquitty',
-                          "kmeans" = 'kmeans'), 
+                          "single linkage" = 'single',
+                          "complete linkage" = 'complete',
+                          "average linkage" = 'average',
+                          "centroid linkage" = 'centroid',
+                          "mcquitty" = 'mcquitty'), 
                         selected = 'none'), 
             
-            conditionalPanel(condition = "input.clusterMethod == \'mcquitty\'", 
-                             strong("Apply To"),
+            conditionalPanel(condition = "input.clusterMethod != \'none\'", 
+                             strong("Apply Clustering To"),
                              checkboxInput('rowv', 'Rows', FALSE),
-                             checkboxInput('colv', 'Columns', FALSE)),
+                             checkboxInput('colv', 'Columns', FALSE),
+                             
+                             strong("Show Dendrogram"),
+                             checkboxInput('dendRow', 'Rows', FALSE),
+                             checkboxInput('dendCol', 'Columns', FALSE)),
             
-            conditionalPanel(condition = "input.clusterMethod == \'kmeans\'",
-                             numericInput("n", label = strong("Set n"), value = 2)),
-                             #checkboxInput('rowv', 'Rows', FALSE),
-                             #checkboxInput('colv', 'Columns', FALSE)),
+            selectInput("distanceMethod", label = "Distance Measurement Method", 
+                        choices = list( 
+                          "euclidean" = 'euclidean',
+                          "manhattan" = 'manhattan'), #aka city block
+                        selected = 'none'), 
             
             selectInput("scale", label = "Scale Type", 
                         choices = list(
                           "row" = 'row',
                           "column" = 'column',
                           "none"='none'),
-                        selected = 'row'), 
-            strong("Show Dendrogram"),
-            checkboxInput('dendRow', 'Rows', FALSE),
-            checkboxInput('dendCol', 'Columns', FALSE)
+                        selected = 'row')
             
           ),  
                  
@@ -79,7 +84,7 @@ shinyUI(navbarPage(position = "fixed-top", theme = "bootstrap.css",
                          'heatmap'),
             sliderInput("heightSlider",
                         "Height",
-                        min = 600, max = 2000, value = 600),
+                        min = 600, max = 2000, value = 700),
             checkboxInput('previewFullSize', 'Preview Full Size', FALSE),
             
             selectInput("startColour", label = "Start Colour", 
@@ -125,10 +130,14 @@ shinyUI(navbarPage(position = "fixed-top", theme = "bootstrap.css",
     conditionalPanel(condition = "input.display == 'table'",
       tableOutput('dataTable'))
     
-    
   ),
   
-  tabPanel('KMeans'),
+  # kmeans and SOMA
+  tabPanel('Non-hierarchical Clustering',
+           br(),br(),br(),br(),
+    numericInput("n", label = strong("Set n"), value = 2),
+    numericInput("iterations", label = strong("Set number of iterations"), value = 20000)),
+  
   #################### Gallery Tab ####################
   tabPanel("Gallery"), 
   
