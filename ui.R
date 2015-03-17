@@ -44,13 +44,20 @@ shinyUI(navbarPage(position = "fixed-top", theme = "bootstrap.css",
             selectInput("clusterMethod", label = "Clustering Method", 
                         choices = list( 
                           "none" = 'none',
-                          "mcquitty" = 'mcquitty'), 
+                          "mcquitty" = 'mcquitty',
+                          "kmeans" = 'kmeans'), 
                         selected = 'none'), 
             
-            conditionalPanel(condition = "input.clusterMethod == \'mcquitty\'",
-              strong("Apply To"),
-              checkboxInput('rowv', 'Rows', FALSE),
-              checkboxInput('colv', 'Columns', FALSE)),
+            conditionalPanel(condition = "input.clusterMethod == \'mcquitty\'", 
+                             strong("Apply To"),
+                             checkboxInput('rowv', 'Rows', FALSE),
+                             checkboxInput('colv', 'Columns', FALSE)),
+            
+            conditionalPanel(condition = "input.clusterMethod == \'kmeans\'",
+                             numericInput("n", label = strong("Set n"), value = 2)),
+                             #checkboxInput('rowv', 'Rows', FALSE),
+                             #checkboxInput('colv', 'Columns', FALSE)),
+            
             selectInput("scale", label = "Scale Type", 
                         choices = list(
                           "row" = 'row',
@@ -72,7 +79,7 @@ shinyUI(navbarPage(position = "fixed-top", theme = "bootstrap.css",
                          'heatmap'),
             sliderInput("heightSlider",
                         "Height",
-                        min = 600, max = 2000, value = 1000),
+                        min = 600, max = 2000, value = 600),
             checkboxInput('previewFullSize', 'Preview Full Size', FALSE),
             
             selectInput("startColour", label = "Start Colour", 
@@ -121,7 +128,7 @@ shinyUI(navbarPage(position = "fixed-top", theme = "bootstrap.css",
     
   ),
   
-  
+  tabPanel('KMeans'),
   #################### Gallery Tab ####################
   tabPanel("Gallery"), 
   

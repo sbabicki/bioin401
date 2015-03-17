@@ -1,8 +1,10 @@
 library(shiny)
 library(gplots)
-setwd("~/Desktop/Dropbox/Winter 2015/Bioin 401/8_Mar17Presentation")
-# ~/Desktop/Dropbox/Winter 2015/Bioin 401/8_Mar17Presentation/program
+# setwd("~/bioin401")
+# ~/bioin/program
 # runApp("program")
+
+# shinyapps::deployApp('~/bioin401')
 
 shinyServer(function(input, output,session) {
   
@@ -70,7 +72,23 @@ shinyServer(function(input, output,session) {
   
   ################# data_analysis #################
   data_analysis <- function(x){
-    x
+    if(input$clusterMethod == "kmeans"){
+      set.seed(1)
+      km<- kmeans(x,input$n) # determine how many cluster you want, I specify 2 here
+      
+      m.kmeans<- cbind(x, km$cluster) # combine the cluster with the matrix
+      
+      dim(m.kmeans)
+      # [1] 903 602
+      # the last column is 602
+      z <- ncol(x)-1
+      o<- order(m.kmeans[,z]) # order the last column
+      
+      m.kmeans<- m.kmeans[o,] # order the matrix according to the order of the last column
+      
+    }
+    else
+      x
   }
   
   ################# get_colv #################
@@ -123,7 +141,7 @@ shinyServer(function(input, output,session) {
               key=FALSE, symkey=FALSE, density.info="none", trace="none", 
               Rowv = rowv, Colv = colv, dendrogram = dendrogram, 
               hclustfun=function(c){
-                if(input$clusterMethod == "none")
+                if(input$clusterMethod == "none" || input$clusterMethod == "kmeans")
                   return("none")
                 else
                   return(hclust(c, method=input$clusterMethod))
@@ -134,8 +152,8 @@ shinyServer(function(input, output,session) {
               #lwid = c(1.5,4),
               #lhei = c(1.5,4,1))
               )
-
-      dev.off()
+    graphics.off()
+    #dev.off()
   }
 
   ################# get_height ################# 
@@ -172,9 +190,8 @@ shinyServer(function(input, output,session) {
     content = function(file) {
         png(file,width=800, height=get_height(input$downloadFullSize))
       
-        heatmapData <- get_heatmap()  
-      
-        dev.off()
+        heatmapData <- get_heatmap()
+        
     }, 
     contentType="image/png")
   })

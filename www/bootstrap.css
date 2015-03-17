@@ -18,11 +18,11 @@ html {
 }
 
 #dropdownTitle {
-    background-color:white;
 }
 
 #dropdownMenu {
     background-color:#E1E5E5;
+    
 }
 
 #plot{
@@ -4410,6 +4410,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   }
 }
 .navbar-default {
+  z-index: 10000 !important;
   background-color: #3e3f3a;
   border-color: #3e3f3a;
 }
