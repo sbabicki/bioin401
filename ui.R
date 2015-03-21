@@ -9,8 +9,8 @@ shinyUI(navbarPage(position = "fixed-top", theme = "bootstrap.css",
     ##########  Heatmap Plot Output ##########        
     conditionalPanel(condition = "input.display == 'heatmap'", 
       absolutePanel(id="heatmapPanel",
-                    top = 0, left = 0, width="70%",
-                    draggable = TRUE,
+                    top = 0, left = 0, width="100%",
+                    draggable = FALSE,
                     fixed = FALSE,
                     plotOutput(outputId='heatmap', width= "95%"))),
     
@@ -25,18 +25,19 @@ shinyUI(navbarPage(position = "fixed-top", theme = "bootstrap.css",
     ##########  Options Menu ##########   
     absolutePanel(style = "z-index:10000;", id="dropdownMenu", 
                   top = 0, right = 0, width="360", 
-                  draggable = FALSE,
-                  fixed = FALSE,
+                  draggable = FALSE,  
+                  fixed=TRUE,
     
     ########## Option Menu Button ##########                
     actionButton("showOptionsButton", label = h4("Options Menu")),
     
     conditionalPanel(condition = "input.showOptionsButton%2 == 0",  
-    tags$div(style = 
-        "padding:1em; 
-        opacity: 0.92; 
-        background-color:#E1E5E5;
-        float:right;", 
+      tags$div(style = "padding:1em; opacity: 0.92; background-color:#E1E5E5; float:right;
+    top:63px;
+    bottom:0;
+  position:fixed;
+    overflow-y:scroll;
+    overflow-x:hidden;", 
       tabsetPanel(
         
         ########## File input tab ##########  
