@@ -23,8 +23,8 @@ shinyUI(navbarPage(position = "fixed-top", theme = "bootstrap.css",
                     tableOutput('dataTable'))),
     
     ##########  Options Menu ##########   
-    absolutePanel(style = "opacity: 0.92", id="dropdownMenu", 
-                  top = 60, right = 0, width="350", 
+    absolutePanel(style = "z-index:10000;", id="dropdownMenu", 
+                  top = 0, right = 0, width="360", 
                   draggable = FALSE,
                   fixed = FALSE,
     
@@ -32,16 +32,28 @@ shinyUI(navbarPage(position = "fixed-top", theme = "bootstrap.css",
     actionButton("showOptionsButton", label = h4("Options Menu")),
     
     conditionalPanel(condition = "input.showOptionsButton%2 == 0",  
+    tags$div(style = 
+        "padding:1em; 
+        opacity: 0.92; 
+        background-color:#E1E5E5;
+        float:right;", 
       tabsetPanel(
         
         ########## File input tab ##########  
         tabPanel(title = "File Input",
             h3("File Input:"),
-            fileInput('file1',
-                      'Choose File',
-                      accept=c('text/csv','text/comma-separated-values,text/plain','.csv')),
-            tags$textarea(id="textInput", rows=5, cols=25, ""),
             
+            fileInput('file1',
+                      '1.Choose File',
+                      accept=c('text/csv','text/comma-separated-values,text/plain','.csv')),
+            strong("OR 2.Paste File Content"),
+            tags$textarea(id="textInput",  rows=12, cols=38, ""),
+            radioButtons("exampleFiles",
+                         'OR 3.Use Example Input',
+                         c("Example 1" = 'ex1',
+                           "Example 2" = 'ex2',
+                           "Example 3" = 'ex3'),
+                         'ex1'),
             radioButtons('sep', 
                      'File separator',
                      c(Tab='\t', Comma=',', Semicolon=';'),
@@ -50,6 +62,7 @@ shinyUI(navbarPage(position = "fixed-top", theme = "bootstrap.css",
           ########## Analysis tab ##########  
           tabPanel(title = "Analysis",
             h3("Analysis:"),
+            
             selectInput("clusterMethod", label = "Clustering Method", 
                         choices = list( 
                           "none" = 'none',
@@ -85,14 +98,16 @@ shinyUI(navbarPage(position = "fixed-top", theme = "bootstrap.css",
                  
           ########## Customize image tab ##########
           tabPanel(title =  "Customize",
-          
             h3("Customize Image:"),
+            
             radioButtons('display', 'Display',
                          c(Table='table', Heatmap='heatmap'),
                          'heatmap'),
+            
             sliderInput("heightSlider",
                         "Height",
                         min = 600, max = 2000, value = 700),
+            
             checkboxInput('previewFullSize', 'Preview Full Size', FALSE),
             
             selectInput("startColour", label = "Positive Colour", 
@@ -116,7 +131,8 @@ shinyUI(navbarPage(position = "fixed-top", theme = "bootstrap.css",
            
             sliderInput("binSlider",
                           "Number of shades",
-                           min = 3, max = 299, value = 160), 
+                           min = 3, max = 299, value = 160),
+            
             textInput("imageTitle", label = "Title", value = ""),
             textInput("xaxis", label = "X Axis Label", value = ""),
             textInput("yaxis", label = "Y Axis Label", value = "")),
@@ -129,8 +145,7 @@ shinyUI(navbarPage(position = "fixed-top", theme = "bootstrap.css",
                          'File Format',
                          c("PNG"='png', "PDF"='pdf', "JPEG"='jpeg'),
                          'png'),
-            
-            downloadButton('downloadData', 'Save Image'))
+            downloadButton('downloadData', 'Save Image')))
   )))),
   
   #################### Gallery Tab ####################
