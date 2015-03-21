@@ -4,7 +4,7 @@ shinyUI(navbarPage(position = "fixed-top", theme = "bootstrap.css",
   title = "Heatmap App",
 
   #################### Analysis Tab ####################  
-  tabPanel("Herarchical Clustering",  
+  tabPanel("Analysis",  
            
     ##########  Heatmap Plot Output ##########        
     conditionalPanel(condition = "input.display == 'heatmap'",
@@ -27,7 +27,7 @@ shinyUI(navbarPage(position = "fixed-top", theme = "bootstrap.css",
           ########## File input options ##########  
             h3("File Input:"),
             fileInput('file1',
-                      'Choose CSV File',
+                      'Choose File',
                       accept=c('text/csv','text/comma-separated-values,text/plain','.csv')),
             tags$textarea(id="textInput", rows=5, cols=25, ""),
             
@@ -87,7 +87,7 @@ shinyUI(navbarPage(position = "fixed-top", theme = "bootstrap.css",
                         min = 600, max = 2000, value = 700),
             checkboxInput('previewFullSize', 'Preview Full Size', FALSE),
             
-            selectInput("startColour", label = "Start Colour", 
+            selectInput("startColour", label = "Positive Colour", 
                         choices = list( 
                           "red" = 'red',
                           "orange" = 'orange',
@@ -96,7 +96,7 @@ shinyUI(navbarPage(position = "fixed-top", theme = "bootstrap.css",
                           "blue" = 'blue',
                           "purple" = 'purple'), 
                         selected = 1),
-            selectInput("endColour", label = "End Colour", 
+            selectInput("endColour", label = "Negative Colour", 
                         choices = list(
                           "green" = 'green',
                           "red" = 'red',
@@ -107,7 +107,7 @@ shinyUI(navbarPage(position = "fixed-top", theme = "bootstrap.css",
                         selected = 1),
            
             sliderInput("binSlider",
-                          "Number of colours",
+                          "Number of shades",
                            min = 3, max = 299, value = 160)
         ),
           
@@ -131,12 +131,6 @@ shinyUI(navbarPage(position = "fixed-top", theme = "bootstrap.css",
       tableOutput('dataTable'))
     
   ),
-  
-  # kmeans and SOMA
-  tabPanel('Non-hierarchical Clustering',
-           br(),br(),br(),br(),
-    numericInput("n", label = strong("Set n"), value = 2),
-    numericInput("iterations", label = strong("Set number of iterations"), value = 20000)),
   
   #################### Gallery Tab ####################
   tabPanel("Gallery"), 

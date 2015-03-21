@@ -70,27 +70,6 @@ shinyServer(function(input, output,session) {
     return(data.matrix(fileData))
   }
   
-  ################# data_analysis #################
-  data_analysis <- function(x){
-    if(input$clusterMethod == "kmeans"){
-      set.seed(1)
-      km<- kmeans(x,input$n) # determine how many cluster you want, I specify 2 here
-      
-      m.kmeans<- cbind(x, km$cluster) # combine the cluster with the matrix
-      
-      dim(m.kmeans)
-      # [1] 903 602
-      # the last column is 602
-      z <- ncol(x)-1
-      o<- order(m.kmeans[,z]) # order the last column
-      
-      m.kmeans<- m.kmeans[o,] # order the matrix according to the order of the last column
-      
-    }
-    else
-      x
-  }
-  
   ################# get_colv #################
   get_colv <- function(){
     if(input$clusterMethod == 'none')
@@ -125,7 +104,6 @@ shinyServer(function(input, output,session) {
     
     # get the data matrix to convert to heatmap
     heatmapDataMatrix <- get_data_matrix()
-    # heatmapDataMatrix <- data_analysis(heatmapDataMatrix)
     colv <- get_colv()
     rowv <- get_rowv()
     dendrogram <- get_dendrogram()
@@ -141,7 +119,7 @@ shinyServer(function(input, output,session) {
               key=FALSE, symkey=FALSE, density.info="none", trace="none", 
               Rowv = rowv, Colv = colv, dendrogram = dendrogram, 
               hclustfun=function(c){
-                if(input$clusterMethod == "none") # || input$clusterMethod == "kmeans")
+                if(input$clusterMethod == "none")
                   return("none")
                 else
                   return(hclust(c, method=input$clusterMethod))
