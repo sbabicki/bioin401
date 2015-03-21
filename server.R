@@ -112,7 +112,7 @@ shinyServer(function(input, output,session) {
       return(NULL)
     # customize colors
     my_palette <- colorRampPalette(c(input$startColour, "black", input$endColour))(n = input$binSlider)
-    
+   
     # create the heatmap
     heatmap.2(heatmapDataMatrix,
               col=my_palette, scale=input$scale,
@@ -125,11 +125,9 @@ shinyServer(function(input, output,session) {
                   return(hclust(c, method=input$clusterMethod))
                 }, 
               distfun = function(c){dist(c, method=input$distanceMethod)},
-              keysize=0.5, cexRow=1, 
-              main=input$imageTitle, xlab=input$xaxis, ylab=input$yaxis
-              #lmat = rbind(c(0,3),c(2,1),c(0,4)),
-              #lwid = c(1.5,4),
-              #lhei = c(1.5,4,1))
+              keysize=0.5, cexRow=0.8, 
+              main=input$imageTitle, xlab=input$xaxis, ylab=input$yaxis, 
+              margins = c(5,7)
               )
     graphics.off()
     #dev.off()
@@ -159,15 +157,15 @@ shinyServer(function(input, output,session) {
   ################# Heatmap ################# 
   output$heatmap <- renderPlot({
       get_heatmap()
-    }, height=reactive({get_height(input$previewFullSize)}))
+    }, height=reactive({get_height(input$previewFullSize)}), width=reactive({input$widthSlider}))
 
   ################# Save File ################# 
   output$downloadData <- downloadHandler(
     
-    filename = "heatmapNew",
+    filename = "heatmap",
     
     content = function(file) {
-        png(file,width=800, height=get_height(input$downloadFullSize))
+        png(file,width=input$widthSlider, height=get_height(input$downloadFullSize))
       
         heatmapData <- get_heatmap()
         

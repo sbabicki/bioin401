@@ -9,10 +9,10 @@ shinyUI(navbarPage(position = "fixed-top", theme = "bootstrap.css",
     ##########  Heatmap Plot Output ##########        
     conditionalPanel(condition = "input.display == 'heatmap'", 
       absolutePanel(id="heatmapPanel",
-                    top = 0, left = 0, width="100%",
-                    draggable = FALSE,
+                    top = "70px", left = 0, width="100%",
+                    draggable = TRUE,
                     fixed = FALSE,
-                    plotOutput(outputId='heatmap', width= "95%"))),
+                    plotOutput(outputId='heatmap'))),
     
     ########## Table Output ##########
     conditionalPanel(condition = "input.display == 'table'",
@@ -33,11 +33,7 @@ shinyUI(navbarPage(position = "fixed-top", theme = "bootstrap.css",
     
     conditionalPanel(condition = "input.showOptionsButton%2 == 0",  
       tags$div(style = "padding:1em; opacity: 0.92; background-color:#E1E5E5; float:right;
-    top:63px;
-    bottom:0;
-  position:fixed;
-    overflow-y:scroll;
-    overflow-x:hidden;", 
+              top:63px; bottom:0; position:fixed; overflow-y:scroll;", 
       tabsetPanel(
         
         ########## File input tab ##########  
@@ -108,6 +104,9 @@ shinyUI(navbarPage(position = "fixed-top", theme = "bootstrap.css",
             sliderInput("heightSlider",
                         "Height",
                         min = 600, max = 2000, value = 700),
+            sliderInput("widthSlider",
+                        "Width",
+                        min = 800, max = 1500, value = 800),
             
             checkboxInput('previewFullSize', 'Preview Full Size', FALSE),
             
