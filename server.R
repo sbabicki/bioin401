@@ -13,19 +13,21 @@ shinyServer(function(input, output,session) {
   ################# get_file ################# 
   # retrieves the file input data
   get_file<-reactive({
-   
+    
     # input$file1 is NULL before upload
     inFile <- input$file1
-    
-    if (is.null(inFile)){
+    path <- inFile$datapath
+    if(input$chooseInput == 'examples')
+      path <- input$exampleFiles
+    if (is.null(path)){
       return(NULL)
     }
-    
+
     # file has been uploaded
     # data frame with 'name', 'size', 'type', and 'datapath' columns. 
     # 'datapath' column contains the local filenames where the data can be found.
     else{  
-      x <- read.csv(inFile$datapath, header=TRUE, sep=input$sep)
+      x <- read.csv(path, header=TRUE, sep=input$sep)
       y <- remove_strings(x)
     }
     
@@ -51,7 +53,8 @@ shinyServer(function(input, output,session) {
     name = 'NAME'
     tryCatch({
       nameRow<-x[,name]
-      rownames(y) <- make.names(nameRow, unique=TRUE)
+      nameRow <- paste(substr(nameRow, 0, 7),"...")
+      rownames(y) <- paste(rownames(y),nameRow) #make.names(nameRow, unique=TRUE)
       }, 
       finally = {return(y)})
   }
@@ -98,6 +101,9 @@ shinyServer(function(input, output,session) {
       "none"
   }
   
+  get_table_data <- function(x){
+  }
+  
   ################# get_heatmap ################# 
   # returns a heatmap created from the file input data
   get_heatmap<-function(){
@@ -125,9 +131,9 @@ shinyServer(function(input, output,session) {
                   return(hclust(c, method=input$clusterMethod))
                 }, 
               distfun = function(c){dist(c, method=input$distanceMethod)},
-              keysize=0.5, cexRow=0.8, 
+              keysize=0.5, cexRow=1, 
               main=input$imageTitle, xlab=input$xaxis, ylab=input$yaxis, 
-              margins = c(5,7)
+              margins = c(5,7), offsetCol = 0, offsetRow = 0
               )
     graphics.off()
     #dev.off()

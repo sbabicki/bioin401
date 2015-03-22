@@ -39,27 +39,35 @@ shinyUI(navbarPage(position = "fixed-top", theme = "bootstrap.css",
         ########## File input tab ##########  
         tabPanel(title = "File Input",
             h3("File Input:"),
-            
-            fileInput('file1',
-                      '1.Choose File',
+            radioButtons("chooseInput",
+                         'Choose Input Type',
+                         c("Upload File" = 'fileUpload',
+                           "Example File" = 'examples'
+                           ),
+                         'fileUpload'),
+            conditionalPanel(condition = "input.chooseInput == \'examples\'",
+              selectInput("exampleFiles", label = "Choose Example File", 
+                        choices = list(
+                          "Example 1" = 'example_input/example1.txt',
+                          "Example 2" = 'example_input/example2.txt',
+                          "Example 3" = 'example_input/example3.txt'),
+                        selected = 1)),  
+            conditionalPanel(condition = "input.chooseInput == \'fileUpload\'",
+              fileInput('file1',
+                      'Upload File',
                       accept=c('text/csv','text/comma-separated-values,text/plain','.csv')),
-            strong("OR 2.Paste File Content"),
-            tags$textarea(id="textInput",  rows=12, cols=38, ""),
-            radioButtons("exampleFiles",
-                         'OR 3.Use Example Input',
-                         c("Example 1" = 'ex1',
-                           "Example 2" = 'ex2',
-                           "Example 3" = 'ex3'),
-                         'ex1'),
-            radioButtons('sep', 
-                     'File separator',
-                     c(Tab='\t', Comma=',', Semicolon=';'),
-                     '\t')),
+              radioButtons('sep', 
+                           'File separator',
+                           c(Tab='\t', Comma=',', Semicolon=';'),
+                           '\t'))),
+            
+            #tags$textarea(id="textInput",  rows=12, cols=38, NULL),
+
+            
           
           ########## Analysis tab ##########  
           tabPanel(title = "Analysis",
             h3("Analysis:"),
-            
             selectInput("clusterMethod", label = "Clustering Method", 
                         choices = list( 
                           "none" = 'none',
@@ -106,7 +114,7 @@ shinyUI(navbarPage(position = "fixed-top", theme = "bootstrap.css",
                         min = 600, max = 2000, value = 700),
             sliderInput("widthSlider",
                         "Width",
-                        min = 800, max = 1500, value = 800),
+                        min = 760, max = 1500, value = 800),
             
             checkboxInput('previewFullSize', 'Preview Full Size', FALSE),
             
