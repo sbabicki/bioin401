@@ -59,13 +59,16 @@ shinyUI(navbarPage(position = "fixed-top", theme = "bootstrap.css",
                            "Example File" = 'examples'
                            ),
                          'fileUpload'),
+            
             conditionalPanel(condition = "input.chooseInput == \'examples\'",
               selectInput("exampleFiles", label = "Choose Example File", 
                         choices = list(
                           "Example 1" = 'example_input/example1.txt',
                           "Example 2" = 'example_input/example2.txt',
                           "Example 3" = 'example_input/example3.txt'),
-                        selected = 1)),  
+                        selected = 1),
+              downloadButton('downloadExample', 'Download Example File')),  
+            
             conditionalPanel(condition = "input.chooseInput == \'fileUpload\'",
               fileInput('file1',
                       'Upload File',

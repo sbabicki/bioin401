@@ -224,6 +224,10 @@ shinyServer(function(input, output,session) {
       get_heatmap()
     }, height=reactive({get_height(input$previewFullSize)}), width=reactive({input$widthSlider}))
 
+  output$downloadExample <- downloadHandler(
+    filename = "example.txt",
+    content = function(file) {write.csv(read.csv(input$exampleFiles, header=TRUE, sep=input$sep), file)})
+
   ################# Save File ################# 
   output$downloadData <- downloadHandler(
 
