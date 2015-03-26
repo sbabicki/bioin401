@@ -11,28 +11,7 @@ html {
   font-family: sans-serif;
   -ms-text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
-
-  background-color: #F8FCFF;
 }
-
-#showOptionsButton {
-    background-color:#4C7373;
-    float:right;
-}
-
-#plot{
-}
-#heatmapPanel { 
-}
-
-
-.draggable{
-    
-}
-.shiny-plot-output{
-}
-
-
 
 
 body {

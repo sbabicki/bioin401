@@ -5,6 +5,8 @@ library(gplots)
 # runApp("program")
 
 # shinyapps::deployApp('~/bioin401')
+# shinyapps::terminateApp('bioin401')
+# https://www.shinyapps.io/admin/#/dashboard
 
 shinyServer(function(input, output,session) {
   
@@ -16,9 +18,13 @@ shinyServer(function(input, output,session) {
     
     # input$file1 is NULL before upload
     inFile <- input$file1
+
     path <- inFile$datapath
-    if(input$chooseInput == 'examples')
+    
+    if(input$chooseInput == 'examples'){
       path <- input$exampleFiles
+    }
+    
     if (is.null(path)){
       return(NULL)
     }

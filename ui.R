@@ -1,11 +1,25 @@
 # ui.R
 
 shinyUI(navbarPage(position = "fixed-top", theme = "bootstrap.css",
+  #tags$head(tags$link(rel = "stylesheet", type = "text/css", href = "spinner.css")),
+          
+              #     tagList(
+              #       tags$head(
+              #         tags$link(rel="stylesheet", type="text/css",href="spinner.css"),
+              #        tags$script(type="text/javascript", src = "busy.js")
+              #       )
+              #     ),
+                   #div(class = "busy",  
+                  #     includeHTML("www/spinner.html")
+                  # ),
   title = "Heatmap App",
-  
+
   #################### Analysis Tab ####################  
   tabPanel("Analysis",  
-  
+    tags$link(rel = "stylesheet", type = "text/css", href = "myStyle.css"),  
+    tags$script(type="text/javascript", src = "busy.js"),
+    div(class = "busy", includeHTML("www/spinner.html")),
+    
     ##########  Heatmap Plot Output ##########        
     conditionalPanel(condition = "input.display == 'heatmap'", 
       absolutePanel(id="heatmapPanel",
@@ -74,8 +88,8 @@ shinyUI(navbarPage(position = "fixed-top", theme = "bootstrap.css",
                           "single linkage" = 'single',
                           "complete linkage" = 'complete',
                           "average linkage" = 'average',
-                          "centroid linkage" = 'centroid',
-                          "mcquitty" = 'mcquitty'), 
+                          "centroid linkage" = 'centroid'
+                          ), 
                         selected = 'none'), 
             
             conditionalPanel(condition = "input.clusterMethod != \'none\'", 
@@ -102,7 +116,7 @@ shinyUI(navbarPage(position = "fixed-top", theme = "bootstrap.css",
                  
                  
           ########## Customize image tab ##########
-          tabPanel(title =  "Customize",
+          tabPanel(title =  "Image",
             h3("Customize Image:"),
             
             radioButtons('display', 'Display',
@@ -147,7 +161,7 @@ shinyUI(navbarPage(position = "fixed-top", theme = "bootstrap.css",
             textInput("yaxis", label = "Y Axis Label", value = "")),
           
           ########## Save options ##########  
-          tabPanel(title = "Save",
+          tabPanel(title = "Save As",
             h3("Save Output:"),
             checkboxInput('downloadFullSize', 'Download Full Size', TRUE),
             radioButtons('downloadFormat', 
