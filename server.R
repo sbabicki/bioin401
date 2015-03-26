@@ -28,7 +28,10 @@ shinyServer(function(input, output,session) {
     # 'datapath' column contains the local filenames where the data can be found.
     else{  
       x <- read.csv(path, header=TRUE, sep=input$sep)
-      y <- remove_strings(x)
+      if(input$display == "heatmap")
+        y <- remove_strings(x)
+      else
+        y <- x
     }
     
     if (is.null(y)){
@@ -102,6 +105,29 @@ shinyServer(function(input, output,session) {
   }
   
   get_table_data <- function(x){
+#    col <- get_colv()
+#    row <- get_rowv()
+#    if(input$clusterMethod != "none"){
+#     if(col){
+ #       col_dist <- dist(x, method=input$distanceMethod)
+ #       col_cluster <- hclust(col_dist, method=input$clusterMethod)
+ #     }       
+#      if(row){
+#       row_dist <- dist(x, method=input$distanceMethod)
+#        row_cluster <- hclust(row_dist, method=input$clusterMethod)
+#      } 
+#    }
+
+  ## Row clustering (adjust here distance/linkage methods to what you need!)
+  hr <- hclust(as.dist(1-cor(t(x), method="pearson")),
+             method="complete")
+
+  ## Column clustering (adjust here distance/linkage methods to what you need!)
+  hc <- hclust(as.dist(1-cor(x, method="spearman")), method="complete")
+  ## Return matrix with row/column sorting as in heatmap
+  x[rev(hr$labels[hr$order]), hc$labels[hc$order]]
+
+
   }
   
   ################# get_heatmap ################# 
@@ -119,9 +145,12 @@ shinyServer(function(input, output,session) {
     # customize colors
     my_palette <- colorRampPalette(c(input$startColour, "black", input$endColour))(n = input$binSlider)
    
+    # maximum number of nested expressions to be evaluated
+    options(expressions = 10000)
+    
     # create the heatmap
     heatmap.2(heatmapDataMatrix,
-              col=my_palette, scale=input$scale,
+              col=my_palette, scale=input$scale, 
               key=FALSE, symkey=FALSE, density.info="none", trace="none", 
               Rowv = rowv, Colv = colv, dendrogram = dendrogram, 
               hclustfun=function(c){
@@ -153,11 +182,35 @@ shinyServer(function(input, output,session) {
     }
   }
 
+  get_content_type <- function(cont) {
+    if(cont == "pdf"){
+      print("application/pdf")
+      return("application/pdf")
+    } 
+    else{
+      print(paste("image/", cont, sep=""))
+      return(paste("image/", cont, sep="")  )
+    }
+  }
+
   ########################################### OUTPUT ###########################################
   
   ################# Table ################# 
   output$dataTable <- renderTable({
-      get_file() 
+   
+   y <- data.matrix(get_file())
+    #te <- heatmap.2(y)
+  #  data.frame(y[rev(te$rowInd), te$colInd])
+    ## Some input sample matrix
+   # y <- matrix(rnorm(50), 10, 5, dimnames=list(paste("g", 1:10, sep=""), paste("t", 1:5, sep="")))
+    
+    
+    ## Run heatmap.2 on this matrix
+#    library(gplots)
+ #   test <- heatmap.2(y)
+  #  y[rev(test$rowInd), test$colInd]
+
+
   })
 
   ################# Heatmap ################# 
@@ -167,14 +220,24 @@ shinyServer(function(input, output,session) {
 
   ################# Save File ################# 
   output$downloadData <- downloadHandler(
-    
-    filename = "heatmap",
+
+    filename = reactive({paste("heatmap.", input$downloadFormat, sep="")}),
     
     content = function(file) {
+      if(input$downloadFormat == "pdf"){
+        pdf(file,width=input$widthSlider, height=get_height(input$downloadFullSize))
+      }
+      else if(input$downloadFormat == "jpeg"){
+        return(NULL)
+      }
+      else{
         png(file,width=input$widthSlider, height=get_height(input$downloadFullSize))
+      }
       
-        heatmapData <- get_heatmap()
-        
+      heatmapData <- get_heatmap() 
+      #print(input$downloadFormat)
     }, 
-    contentType="image/png")
+    
+    contentType=reactive({get_content_type(input$downloadFormat)})) 
+      
   })
