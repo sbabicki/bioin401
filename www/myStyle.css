@@ -1,7 +1,5 @@
 html {
-
     background-color: #F8FCFF;
-
 }
 
 #showOptionsButton {
@@ -9,19 +7,23 @@ html {
     float:right;
 }
 
+.myTabs {
+    background-color:lightgrey; 
+    padding:1em; 
+    margin-top:80px; 
+    border-radius: 5px;
+}
+
 #plot{
 }
 #heatmapPanel { 
 }
-
-
-.draggable{
-    
+.draggable{ 
 }
 .shiny-plot-output{
 }
 
-
+/* Reference will go here */
 .spinner {
   margin: 0 auto;
   width: 20px;

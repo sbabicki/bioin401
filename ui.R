@@ -179,16 +179,14 @@ shinyUI(navbarPage(position = "fixed-top", theme = "bootstrap.css",
   )))),
   
   #################### Gallery Tab ####################
-  tabPanel("Gallery"), 
+  tabPanel("Gallery",
+    tags$div(class="myTabs", includeHTML("www/gallery.html"))), 
   
   #################### Instructions Tab ####################
   tabPanel("Instructions",
-    h3("Instructions"),
-    wellPanel(
-    helpText("Tutiorial on how to use app"))),
+    tags$div(class="myTabs", includeHTML("www/instructions.html"))),
   
   #################### Contact Tab ####################
-  tabPanel("Contact", 
-    wellPanel(paste("Contact me by email: babicki@ualberta.ca"))) 
-  
+  tabPanel("Contact",
+    tags$div(class="myTabs", includeHTML("www/contact.html"))) 
 ))
