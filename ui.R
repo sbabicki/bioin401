@@ -38,16 +38,17 @@ shinyUI(navbarPage(position = "fixed-top", theme = "bootstrap.css",
     
     ##########  Options Menu ##########   
     absolutePanel(style = "z-index:10000;", id="dropdownMenu", 
-                  top = 0, right = 0, width="360", 
+                  top = 0, right = 0, width="360px", 
                   draggable = FALSE,  
                   fixed=TRUE,
     
     ########## Option Menu Button ##########                
-    actionButton("showOptionsButton", label = h4("Options Menu")),
+    actionButton("showOptionsButton", label = h4("Options Menu"),),
+    tags$div(style = "margin-top:41px; right:40px; position:fixed; z-index:1000000; float:right;", "Click to expand"),
     
     conditionalPanel(condition = "input.showOptionsButton%2 == 0",  
       tags$div(style = "padding:1em; opacity: 0.92; background-color:#E1E5E5; float:right;
-              top:63px; bottom:0; position:fixed; overflow-y:scroll;", 
+              top:63px; bottom:0; right:0; position:fixed; overflow-y:scroll;", 
       tabsetPanel(
         
         ########## File input tab ##########  
@@ -171,6 +172,9 @@ shinyUI(navbarPage(position = "fixed-top", theme = "bootstrap.css",
                          'File Format',
                          c("PNG"='png', "PDF"='pdf', "JPEG"='jpeg'),
                          'png'),
+            sliderInput("resSlider",
+                        "Resolution",
+                        min = 72, max = 600, value = 72),
             downloadButton('downloadData', 'Save Image')))
   )))),
   

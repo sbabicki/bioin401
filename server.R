@@ -1,6 +1,6 @@
 library(shiny)
 library(gplots)
-# setwd("~/bioin401")
+# setwd("~/")
 # ~/bioin/program
 # runApp("program")
 
@@ -222,8 +222,9 @@ shinyServer(function(input, output,session) {
   ################# Heatmap ################# 
   output$heatmap <- renderPlot({
       get_heatmap()
-    }, height=reactive({get_height(input$previewFullSize)}), width=reactive({input$widthSlider}))
+    }, height=reactive({get_height(input$previewFullSize)}), width=reactive({input$widthSlider}), res=input$resSlider)
 
+  ################# Save Example File ################# 
   output$downloadExample <- downloadHandler(
     filename = "example.txt",
     content = function(file) {write.csv(read.csv(input$exampleFiles, header=TRUE, sep=input$sep), file)})
@@ -233,21 +234,22 @@ shinyServer(function(input, output,session) {
 
     filename = reactive({paste("heatmap.", input$downloadFormat, sep="")}),
     
-    content = function(file) {
-      if(input$downloadFormat == "pdf"){
-        pdf(file,width=input$widthSlider, height=get_height(input$downloadFullSize))
-      }
-      else if(input$downloadFormat == "jpeg"){
-        return(NULL)
-      }
-      else{
-        png(file,width=input$widthSlider, height=get_height(input$downloadFullSize))
-      }
-      
+#    content = function(file) {
+#      if(input$downloadFormat == "pdf"){
+#        pdf(file,width=input$widthSlider, height=get_height(input$downloadFullSize))
+#      }
+#      else if(input$downloadFormat == "jpeg"){
+#        return(NULL)
+#      }
+#      else{
+#        png(file,width=input$widthSlider, height=get_height(input$downloadFullSize))
+#     }
+      content = function(file) {
+        png(file,width=input$widthSlider, height=get_height(input$downloadFullSize), res=input$resSlider)
       heatmapData <- get_heatmap() 
       #print(input$downloadFormat)
     }, 
     
-    contentType=reactive({get_content_type(input$downloadFormat)})) 
+    contentType="image/png")#reactive({get_content_type(input$downloadFormat)})) 
       
   })
