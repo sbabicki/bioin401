@@ -1,17 +1,7 @@
 # ui.R
 
 shinyUI(navbarPage(position = "fixed-top", theme = "bootstrap.css",
-  #tags$head(tags$link(rel = "stylesheet", type = "text/css", href = "spinner.css")),
-          
-              #     tagList(
-              #       tags$head(
-              #         tags$link(rel="stylesheet", type="text/css",href="spinner.css"),
-              #        tags$script(type="text/javascript", src = "busy.js")
-              #       )
-              #     ),
-                   #div(class = "busy",  
-                  #     includeHTML("www/spinner.html")
-                  # ),
+
   title = "Heatmap App",
 
   #################### Analysis Tab ####################  
@@ -24,15 +14,15 @@ shinyUI(navbarPage(position = "fixed-top", theme = "bootstrap.css",
     conditionalPanel(condition = "input.display == 'heatmap'", 
       absolutePanel(id="heatmapPanel",
                     top = "70px", left = 0, width="100%",
-                    draggable = TRUE,
+                    draggable = FALSE,
                     fixed = FALSE,
                     plotOutput(outputId='heatmap'))),
     
     ########## Table Output ##########
     conditionalPanel(condition = "input.display == 'table'",
       absolutePanel(id="tablePanel",
-                    top = 70, left = 0, width="100%",
-                    draggable = TRUE,
+                    top = "70px", left = 0, width="100%",
+                    draggable = FALSE,
                     fixed = FALSE,
                     tableOutput('dataTable'))),
     
@@ -81,8 +71,6 @@ shinyUI(navbarPage(position = "fixed-top", theme = "bootstrap.css",
             
             #tags$textarea(id="textInput",  rows=12, cols=38, NULL),
 
-            
-          
           ########## Analysis tab ##########  
           tabPanel(title = "Analysis",
             h3("Analysis:"),

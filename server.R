@@ -18,9 +18,8 @@ shinyServer(function(input, output,session) {
     
     # input$file1 is NULL before upload
     inFile <- input$file1
-
     path <- inFile$datapath
-    
+
     if(input$chooseInput == 'examples'){
       path <- input$exampleFiles
     }
@@ -203,8 +202,11 @@ shinyServer(function(input, output,session) {
   
   ################# Table ################# 
   output$dataTable <- renderTable({
-   
-   y <- data.matrix(get_file())
+    fileData <- get_file()
+    if(is.null(fileData)){
+      return(NULL)
+    }
+    y <- data.matrix(fileData)
     #te <- heatmap.2(y)
   #  data.frame(y[rev(te$rowInd), te$colInd])
     ## Some input sample matrix
