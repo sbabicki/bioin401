@@ -13,6 +13,34 @@ html {
     margin-top:80px; 
     border-radius: 5px;
 }
+.openingMessage {
+    background-color:lightgrey; 
+    padding:5em; 
+    margin-top:80px; 
+    width:700px;
+    border-radius: 5px;
+}
+
+.exampleInfo {
+    background-color:lightgrey; 
+    padding:1em; 
+    margin-top:1em;
+    margin-bottom:1em;
+    width:300px;
+    opacity:0.99;
+    border-radius: 5px;
+}
+#optionsMenu {
+    padding:1em; 
+    opacity: 0.92; 
+    background-color:#E1E5E5; 
+    float:right;
+    top:63px; 
+    bottom:0; 
+    right:0; 
+    position:fixed; 
+    overflow-y:scroll;
+}
 
 #plot{
 }

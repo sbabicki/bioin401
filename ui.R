@@ -10,6 +10,8 @@ shinyUI(navbarPage(position = "fixed-top", theme = "bootstrap.css",
     tags$script(type="text/javascript", src = "busy.js"),
     div(class = "busy", includeHTML("www/spinner.html")),
     
+    tags$div(class="openingMessage", includeHTML("www/index.html")),
+    
     ##########  Heatmap Plot Output ##########        
     conditionalPanel(condition = "input.display == 'heatmap'", 
       absolutePanel(id="heatmapPanel",
@@ -34,11 +36,10 @@ shinyUI(navbarPage(position = "fixed-top", theme = "bootstrap.css",
     
     ########## Option Menu Button ##########                
     actionButton("showOptionsButton", label = h4("Options Menu"),),
-    tags$div(style = "margin-top:41px; right:40px; position:fixed; z-index:1000000; float:right;", "Click to expand"),
+    #tags$div(style = "margin-top:41px; right:40px; position:fixed; z-index:1000000; float:right;", "Click to expand"),
     
     conditionalPanel(condition = "input.showOptionsButton%2 == 0",  
-      tags$div(style = "padding:1em; opacity: 0.92; background-color:#E1E5E5; float:right;
-              top:63px; bottom:0; right:0; position:fixed; overflow-y:scroll;", 
+      tags$div(id = "optionsMenu", 
       tabsetPanel(
         
         ########## File input tab ##########  
@@ -58,7 +59,11 @@ shinyUI(navbarPage(position = "fixed-top", theme = "bootstrap.css",
                           "Example 2" = 'example_input/example2.txt',
                           "Example 3" = 'example_input/example3.txt'),
                         selected = 1),
-              downloadButton('downloadExample', 'Download Example File')),  
+              tags$div(class="exampleInfo", 
+                       conditionalPanel(condition = "input.exampleFiles == \'example_input/example1.txt\'",includeHTML("www/example1info.html")),
+                       conditionalPanel(condition = "input.exampleFiles == \'example_input/example2.txt\'",includeHTML("www/example2info.html")),
+                       conditionalPanel(condition = "input.exampleFiles == \'example_input/example3.txt\'",includeHTML("www/example3info.html"))),
+              downloadButton('downloadExample', 'Download Example Text File')),  
             
             conditionalPanel(condition = "input.chooseInput == \'fileUpload\'",
               fileInput('file1',
@@ -153,7 +158,7 @@ shinyUI(navbarPage(position = "fixed-top", theme = "bootstrap.css",
             textInput("yaxis", label = "Y Axis Label", value = "")),
           
           ########## Save options ##########  
-          tabPanel(title = "Save As",
+          tabPanel(title = "Save",
             h3("Save Output:"),
             checkboxInput('downloadFullSize', 'Download Full Size', TRUE),
             radioButtons('downloadFormat', 
@@ -161,9 +166,9 @@ shinyUI(navbarPage(position = "fixed-top", theme = "bootstrap.css",
                          c("PNG"='png', "PDF"='pdf', "JPEG"='jpeg'),
                          'png'),
             sliderInput("resSlider",
-                        "Resolution",
+                        "Resolution (in dpi)",
                         min = 72, max = 600, value = 72),
-            downloadButton('downloadData', 'Save Image')))
+            downloadButton('downloadData', 'Save Image As')))
   )))),
   
   #################### Gallery Tab ####################

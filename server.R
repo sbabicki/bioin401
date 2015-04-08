@@ -1,8 +1,7 @@
 library(shiny)
 library(gplots)
 # setwd("~/")
-# ~/bioin/program
-# runApp("program")
+# runApp("bioin401")
 
 # shinyapps::deployApp('~/bioin401')
 # shinyapps::terminateApp('bioin401')
@@ -152,7 +151,7 @@ shinyServer(function(input, output,session) {
    
     # maximum number of nested expressions to be evaluated
     options(expressions = 10000)
-    
+    par(mar=c(0, 0, 0, 0) + 0.1)
     # create the heatmap
     heatmap.2(heatmapDataMatrix,
               col=my_palette, scale=input$scale, 
@@ -186,6 +185,12 @@ shinyServer(function(input, output,session) {
       return(size)
     }
   }
+  
+  ################# get_width ################# 
+  get_width<-function(){
+    paste(input$widthSlider, "px", sep = "")
+  }
+
 
   get_content_type <- function(cont) {
     if(cont == "pdf"){
@@ -206,19 +211,7 @@ shinyServer(function(input, output,session) {
     if(is.null(fileData)){
       return(NULL)
     }
-    y <- data.matrix(fileData)
-    #te <- heatmap.2(y)
-  #  data.frame(y[rev(te$rowInd), te$colInd])
-    ## Some input sample matrix
-   # y <- matrix(rnorm(50), 10, 5, dimnames=list(paste("g", 1:10, sep=""), paste("t", 1:5, sep="")))
-    
-    
-    ## Run heatmap.2 on this matrix
-#    library(gplots)
- #   test <- heatmap.2(y)
-  #  y[rev(test$rowInd), test$colInd]
-
-
+    y <- data.frame(fileData)
   })
 
   ################# Heatmap ################# 
@@ -236,22 +229,23 @@ shinyServer(function(input, output,session) {
 
     filename = reactive({paste("heatmap.", input$downloadFormat, sep="")}),
     
-#    content = function(file) {
-#      if(input$downloadFormat == "pdf"){
-#        pdf(file,width=input$widthSlider, height=get_height(input$downloadFullSize))
-#      }
-#      else if(input$downloadFormat == "jpeg"){
-#        return(NULL)
-#      }
-#      else{
-#        png(file,width=input$widthSlider, height=get_height(input$downloadFullSize))
-#     }
-      content = function(file) {
+    content = function(file) {
+      if(input$downloadFormat == "pdf"){
+        par(mar=c(2.1,2.1,2.1,5.1))
+        pdf(file, width="100px", height="500px")
+        dev.off()
+        #pdf(file,width=input$widthSlider, height=get_height(input$downloadFullSize))
+      }
+      else if(input$downloadFormat == "jpeg"){
+        return(NULL)
+      }
+      else{
         png(file,width=input$widthSlider, height=get_height(input$downloadFullSize), res=input$resSlider)
+      }
+      
       heatmapData <- get_heatmap() 
-      #print(input$downloadFormat)
-    }, 
+    })#, 
     
-    contentType="image/png")#reactive({get_content_type(input$downloadFormat)})) 
+    #contentType="image/png")#reactive({get_content_type(input$downloadFormat)})) 
       
   })
