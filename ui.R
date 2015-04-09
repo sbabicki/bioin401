@@ -10,7 +10,7 @@ shinyUI(navbarPage(position = "fixed-top", theme = "bootstrap.css",
     tags$script(type="text/javascript", src = "busy.js"),
     div(class = "busy", includeHTML("www/spinner.html")),
     
-    tags$div(class="openingMessage", includeHTML("www/index.html")),
+    #tags$div(class="openingMessage", includeHTML("www/index.html")),
     
     ##########  Heatmap Plot Output ##########        
     conditionalPanel(condition = "input.display == 'heatmap'", 
