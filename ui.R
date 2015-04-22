@@ -1,12 +1,11 @@
 # ui.R
 
-shinyUI(navbarPage(position = "fixed-top", theme = "bootstrap.css",
+shinyUI(navbarPage(position = "fixed-top", theme = "theme.css",
 
   title = "Heatmap App",
 
   #################### Analysis Tab ####################  
   tabPanel("Analysis",  
-    tags$link(rel = "stylesheet", type = "text/css", href = "myStyle.css"),  
     tags$script(type="text/javascript", src = "busy.js"),
     div(class = "busy", includeHTML("www/spinner.html")),
     
@@ -18,7 +17,11 @@ shinyUI(navbarPage(position = "fixed-top", theme = "bootstrap.css",
                     top = "70px", left = 0, width="100%",
                     draggable = FALSE,
                     fixed = FALSE,
-                    plotOutput(outputId='heatmap'))),
+                    {test<-plotOutput(outputId='heatmap')
+                     if (is.null(heatmap))
+                       tags$div(class="openingMessage", includeHTML("www/index.html"))
+                     else
+                       test})),
     
     ########## Table Output ##########
     conditionalPanel(condition = "input.display == 'table'",
@@ -63,7 +66,7 @@ shinyUI(navbarPage(position = "fixed-top", theme = "bootstrap.css",
                        conditionalPanel(condition = "input.exampleFiles == \'example_input/example1.txt\'",includeHTML("www/example1info.html")),
                        conditionalPanel(condition = "input.exampleFiles == \'example_input/example2.txt\'",includeHTML("www/example2info.html")),
                        conditionalPanel(condition = "input.exampleFiles == \'example_input/example3.txt\'",includeHTML("www/example3info.html"))),
-              downloadButton('downloadExample', 'Download Example Text File')),  
+              downloadButton(class='btn-info', outputId='downloadExample', label='Download Example Text File')),  
             
             conditionalPanel(condition = "input.chooseInput == \'fileUpload\'",
               fileInput('file1',
@@ -119,7 +122,7 @@ shinyUI(navbarPage(position = "fixed-top", theme = "bootstrap.css",
             radioButtons('display', 'Display',
                          c(Table='table', Heatmap='heatmap'),
                          'heatmap'),
-            
+          conditionalPanel(condition = "input.display == 'heatmap'",        
             sliderInput("heightSlider",
                         "Height",
                         min = 600, max = 2000, value = 700),
@@ -129,24 +132,31 @@ shinyUI(navbarPage(position = "fixed-top", theme = "bootstrap.css",
             
             checkboxInput('previewFullSize', 'Preview Full Size', FALSE),
             
-            selectInput("endColour", label = "Low Colour", 
+            selectInput("startColour", label = "Low Colour", 
                         choices = list(
                           "green" = 'green',
                           "red" = 'red',
                           "orange" = 'orange',
                           "yellow" = 'yellow', 
                           "blue" = 'blue',
-                          "purple" = 'purple'), 
+                          "purple" = 'purple'),
                         selected = 1),
             
-            selectInput("startColour", label = "High Colour", 
+            selectInput("missingDataColour", label = "Missing Data Colour", 
+                        choices = list( 
+                          "black" = 'black',
+                          "grey" = 'grey',
+                          "white" = 'white'),
+                        selected = 1),
+            
+            selectInput("endColour", label = "High Colour", 
                         choices = list( 
                           "red" = 'red',
                           "orange" = 'orange',
                           "yellow" = 'yellow',
                           "green" = 'green', 
                           "blue" = 'blue',
-                          "purple" = 'purple'), 
+                          "purple" = 'purple'),
                         selected = 1),
            
             sliderInput("binSlider",
@@ -155,7 +165,7 @@ shinyUI(navbarPage(position = "fixed-top", theme = "bootstrap.css",
             
             textInput("imageTitle", label = "Title", value = ""),
             textInput("xaxis", label = "X Axis Label", value = ""),
-            textInput("yaxis", label = "Y Axis Label", value = "")),
+            textInput("yaxis", label = "Y Axis Label", value = ""))),
           
           ########## Save options ##########  
           tabPanel(title = "Save",
@@ -168,7 +178,7 @@ shinyUI(navbarPage(position = "fixed-top", theme = "bootstrap.css",
             sliderInput("resSlider",
                         "Resolution (in dpi)",
                         min = 72, max = 600, value = 72),
-            downloadButton('downloadData', 'Save Image As')))
+            downloadButton(class='btn-info', outputId = 'downloadData', 'Save Image As')))
   )))),
   
   #################### Gallery Tab ####################

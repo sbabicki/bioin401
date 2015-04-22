@@ -7,8 +7,8 @@ library(gplots)
 # shinyapps::terminateApp('bioin401')
 # https://www.shinyapps.io/admin/#/dashboard
 
-#max upload size is 15MB
-#options(shiny.maxRequestSize=15*1024^2)
+#max upload size is 10MB
+options(shiny.maxRequestSize=10*1024^2)
 
 shinyServer(function(input, output,session) {
   
@@ -157,7 +157,7 @@ shinyServer(function(input, output,session) {
     par(mar=c(0, 0, 0, 0) + 0.1)
     # create the heatmap
     heatmap.2(heatmapDataMatrix,
-              col=my_palette, scale=input$scale, na.color="black",
+              col=my_palette, scale=input$scale, na.color=input$missingDataColour,
               key=FALSE, symkey=FALSE, density.info="none", trace="none", 
               Rowv = rowv, Colv = colv, dendrogram = dendrogram, 
               hclustfun=function(c){
