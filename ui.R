@@ -112,7 +112,7 @@ shinyUI(navbarPage(position = "fixed-top", theme = "theme.css",
             h3("Customize Image:"),
             
             radioButtons('display', 'Display',
-                         c("Table (original data input only)"='table', "Heatmap"='heatmap'),
+                         c("Heatmap"='heatmap', "Table (original data input only)"='table'),
                          'heatmap'),
           conditionalPanel(condition = "input.display == 'heatmap'",        
            selectInput("cexRow", label = "Row Label Size",
@@ -134,7 +134,6 @@ shinyUI(navbarPage(position = "fixed-top", theme = "theme.css",
                           "Height (in px)",
                           min = 600, max = 2000, value = 700)
             ),
-            
             
             selectInput("startColour", label = "Low Colour", 
                         choices = list(

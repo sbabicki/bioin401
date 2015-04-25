@@ -153,7 +153,6 @@ shinyServer(function(input, output,session) {
    
     # maximum number of nested expressions to be evaluated
     options(expressions = 10000)
-    #par(mar=c(0, 0, 0, 0) + 0.1)
     # create the heatmap
     heatmap.2(heatmapDataMatrix,
               col=my_palette, scale=input$scale, na.color=input$missingDataColour,
@@ -168,7 +167,9 @@ shinyServer(function(input, output,session) {
               distfun = function(c){dist(c, method=input$distanceMethod)},
               keysize=0.5, cexRow=input$cexRow, 
               main=input$imageTitle, xlab=input$xaxis, ylab=input$yaxis, 
-              margins = c(5,7), offsetCol = 0, offsetRow = 0
+              #margins = c(5,7), 
+              offsetCol = 0, offsetRow = 0, 
+              margins=c(5,10), lhei=c(1,8), lwid=c(0.1,0.5)
               )
     graphics.off()
     #dev.off()
