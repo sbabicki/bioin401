@@ -153,7 +153,7 @@ shinyServer(function(input, output,session) {
    
     # maximum number of nested expressions to be evaluated
     options(expressions = 10000)
-    par(mar=c(0, 0, 0, 0) + 0.1)
+    #par(mar=c(0, 0, 0, 0) + 0.1)
     # create the heatmap
     heatmap.2(heatmapDataMatrix,
               col=my_palette, scale=input$scale, na.color=input$missingDataColour,
@@ -180,7 +180,7 @@ shinyServer(function(input, output,session) {
     if(is.null(x))
       return(0)
     else{
-      if(cond == 1)
+      if(cond)
         size <- nrow(x)*ncol(x)
       else
         size <- input$heightSlider
@@ -234,9 +234,8 @@ shinyServer(function(input, output,session) {
     
     content = function(file) {
       if(input$downloadFormat == "pdf"){
-        par(mar=c(2.1,2.1,2.1,5.1))
-        
-        pdf(file, width=500, height=500)
+        #par(mar=c(2.1,2.1,2.1,5.1))
+        pdf(file, width=input$widthSlider, height=get_height(input$downloadFullSize), paper="a4r")
       }
       else{
         ppi <- input$resSlider
@@ -244,6 +243,7 @@ shinyServer(function(input, output,session) {
       }
       
       get_heatmap() 
+      
     })#, 
     
     #contentType="image/png")#reactive({get_content_type(input$downloadFormat)})) 
