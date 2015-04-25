@@ -11,15 +11,15 @@ library(gplots)
 options(shiny.maxRequestSize=10*1024^2)
 
 shinyServer(function(input, output,session) {
-  
+
   ########################################### FUNCTIONS ###########################################
   
   ################# get_file ################# 
   # retrieves the file input data
   get_file<-reactive({
     
-    # input$file1 is NULL before upload
-    inFile <- input$file1
+    # input$file is NULL before upload
+    inFile <- input$file
     path <- inFile$datapath
 
     if(input$chooseInput == 'examples'){
@@ -63,8 +63,7 @@ shinyServer(function(input, output,session) {
     name = 'NAME'
     tryCatch({
       nameRow<-x[,name]
-      nameRow <- paste(substr(nameRow, 0, 7),"...")
-      rownames(y) <- paste(rownames(y),nameRow) #make.names(nameRow, unique=TRUE)
+      rownames(y) <-make.names(nameRow, unique=TRUE) #paste(rownames(y),nameRow) 
       }, 
       finally = {return(y)})
   }
@@ -167,7 +166,7 @@ shinyServer(function(input, output,session) {
                   return(hclust(c, method=input$clusterMethod))
                 }, 
               distfun = function(c){dist(c, method=input$distanceMethod)},
-              keysize=0.5, cexRow=1, 
+              keysize=0.5, cexRow=input$cexRow, 
               main=input$imageTitle, xlab=input$xaxis, ylab=input$yaxis, 
               margins = c(5,7), offsetCol = 0, offsetRow = 0
               )
@@ -218,10 +217,11 @@ shinyServer(function(input, output,session) {
   })
 
   ################# Heatmap ################# 
-  output$heatmap <- renderPlot({
-      get_heatmap()
-    }, height=reactive({get_height(input$previewFullSize)}), width=reactive({input$widthSlider}), res=input$resSlider)
-
+  output$heatmap <- renderPlot(
+      get_heatmap(), 
+      height=reactive({get_height(input$previewFullSize)}), 
+      width=reactive({input$widthSlider}))
+   
   ################# Save Example File ################# 
   output$downloadExample <- downloadHandler(
     filename = "example.txt",
@@ -235,18 +235,15 @@ shinyServer(function(input, output,session) {
     content = function(file) {
       if(input$downloadFormat == "pdf"){
         par(mar=c(2.1,2.1,2.1,5.1))
-        pdf(file, width="100px", height="500px")
-        dev.off()
-        #pdf(file,width=input$widthSlider, height=get_height(input$downloadFullSize))
-      }
-      else if(input$downloadFormat == "jpeg"){
-        return(NULL)
+        
+        pdf(file, width=500, height=500)
       }
       else{
-        png(file,width=input$widthSlider, height=get_height(input$downloadFullSize), res=input$resSlider)
+        ppi <- input$resSlider
+        png(file,width=input$widthSlider, height=get_height(input$downloadFullSize), res=ppi)
       }
       
-      heatmapData <- get_heatmap() 
+      get_heatmap() 
     })#, 
     
     #contentType="image/png")#reactive({get_content_type(input$downloadFormat)})) 

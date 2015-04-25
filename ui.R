@@ -8,20 +8,15 @@ shinyUI(navbarPage(position = "fixed-top", theme = "theme.css",
   tabPanel("Analysis",  
     tags$script(type="text/javascript", src = "busy.js"),
     div(class = "busy", includeHTML("www/spinner.html")),
-    
-    #tags$div(class="openingMessage", includeHTML("www/index.html")),
-    
+
     ##########  Heatmap Plot Output ##########        
     conditionalPanel(condition = "input.display == 'heatmap'", 
       absolutePanel(id="heatmapPanel",
                     top = "70px", left = 0, width="100%",
                     draggable = FALSE,
                     fixed = FALSE,
-                    {test<-plotOutput(outputId='heatmap')
-                     if (is.null(heatmap))
-                       tags$div(class="openingMessage", includeHTML("www/index.html"))
-                     else
-                       test})),
+                    plotOutput(outputId='heatmap')
+                     )),
     
     ########## Table Output ##########
     conditionalPanel(condition = "input.display == 'table'",
@@ -30,18 +25,16 @@ shinyUI(navbarPage(position = "fixed-top", theme = "theme.css",
                     draggable = FALSE,
                     fixed = FALSE,
                     tableOutput('dataTable'))),
-    
+
     ##########  Options Menu ##########   
     absolutePanel(style = "z-index:10000;", id="dropdownMenu", 
                   top = 0, right = 0, width="360px", 
                   draggable = FALSE,  
                   fixed=TRUE,
-    
+                  
     ########## Option Menu Button ##########                
-    actionButton("showOptionsButton", label = h4("Options Menu"),),
-    #tags$div(style = "margin-top:41px; right:40px; position:fixed; z-index:1000000; float:right;", "Click to expand"),
-    
-    conditionalPanel(condition = "input.showOptionsButton%2 == 0",  
+    actionButton("showOptionsButton", label = h4("Toggle Options Menu")),
+    conditionalPanel(condition = "input.showOptionsButton%2 == 0", 
       tags$div(id = "optionsMenu", 
       tabsetPanel(
         
@@ -69,15 +62,13 @@ shinyUI(navbarPage(position = "fixed-top", theme = "theme.css",
               downloadButton(class='btn-info', outputId='downloadExample', label='Download Example Text File')),  
             
             conditionalPanel(condition = "input.chooseInput == \'fileUpload\'",
-              fileInput('file1',
+              fileInput('file',
                       'Upload File',
                       accept=c('text/csv','text/comma-separated-values,text/plain','.csv')),
               radioButtons('sep', 
                            'File separator',
                            c(Tab='\t', Comma=',', Semicolon=';'),
                            '\t'))),
-            
-            #tags$textarea(id="textInput",  rows=12, cols=38, NULL),
 
           ########## Analysis tab ##########  
           tabPanel(title = "Analysis",
@@ -112,7 +103,8 @@ shinyUI(navbarPage(position = "fixed-top", theme = "theme.css",
                           "row" = 'row',
                           "column" = 'column',
                           "none"='none'),
-                        selected = 'row')),  
+                        selected = 'row')
+            ),  
                  
                  
           ########## Customize image tab ##########
@@ -120,14 +112,20 @@ shinyUI(navbarPage(position = "fixed-top", theme = "theme.css",
             h3("Customize Image:"),
             
             radioButtons('display', 'Display',
-                         c(Table='table', Heatmap='heatmap'),
+                         c("Table (original data input only)"='table', "Heatmap"='heatmap'),
                          'heatmap'),
           conditionalPanel(condition = "input.display == 'heatmap'",        
+           selectInput("cexRow", label = "Row Label Size",
+                        choices = list(
+                        "small" = 0.25,
+                        "medium" = 0.5,
+                        "large" = 1),
+                         selected=1),            
             sliderInput("heightSlider",
-                        "Height",
+                        "Height (in px)",
                         min = 600, max = 2000, value = 700),
             sliderInput("widthSlider",
-                        "Width",
+                        "Width (in px)",
                         min = 760, max = 1500, value = 800),
             
             checkboxInput('previewFullSize', 'Preview Full Size', FALSE),
@@ -173,11 +171,11 @@ shinyUI(navbarPage(position = "fixed-top", theme = "theme.css",
             checkboxInput('downloadFullSize', 'Download Full Size', TRUE),
             radioButtons('downloadFormat', 
                          'File Format',
-                         c("PNG"='png', "PDF"='pdf', "JPEG"='jpeg'),
+                         c("PNG"='png', "PDF"='pdf'),
                          'png'),
-            sliderInput("resSlider",
-                        "Resolution (in dpi)",
-                        min = 72, max = 600, value = 72),
+            conditionalPanel(condition="input.downloadFormat=='png'",
+                        sliderInput("resSlider", "Resolution (in dpi)",
+                        min = 72, max = 600, value = 72)),
             downloadButton(class='btn-info', outputId = 'downloadData', 'Save Image As')))
   )))),
   
