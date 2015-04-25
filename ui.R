@@ -123,14 +123,18 @@ shinyUI(navbarPage(position = "fixed-top", theme = "theme.css",
                         "small" = 0.25,
                         "extra small" = 0.125),
                          selected=1),            
-            sliderInput("heightSlider",
-                        "Height (in px)",
-                        min = 600, max = 2000, value = 700),
+            
             sliderInput("widthSlider",
                         "Width (in px)",
                         min = 760, max = 1500, value = 800),
+           
+           checkboxInput('previewFullSize', 'Preview Full Height', FALSE),
+           conditionalPanel(condition = "input.previewFullSize == 0",
+                sliderInput("heightSlider",
+                          "Height (in px)",
+                          min = 600, max = 2000, value = 700)
+            ),
             
-            checkboxInput('previewFullSize', 'Preview Full Size', FALSE),
             
             selectInput("startColour", label = "Low Colour", 
                         choices = list(
@@ -178,7 +182,7 @@ shinyUI(navbarPage(position = "fixed-top", theme = "theme.css",
             conditionalPanel(condition="input.downloadFormat=='png'", 
                         strong("PNG Size"),
                         checkboxInput('downloadFullSize', 'Download Full Size', TRUE),
-                        sliderInput("resSlider", "PNG Resolution (in dpi)",
+                        sliderInput("resSlider", "PNG Resolution (in ppi)",
                         min = 72, max = 600, value = 72)),
             
             downloadButton(class='btn-info', outputId = 'downloadData', 'Save Image As')))

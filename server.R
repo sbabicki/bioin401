@@ -181,27 +181,10 @@ shinyServer(function(input, output,session) {
       return(0)
     else{
       if(cond)
-        size <- nrow(x)*ncol(x)
+        size <- input$widthSlider/ncol(x) * nrow(x)
       else
         size <- input$heightSlider
       return(size)
-    }
-  }
-  
-  ################# get_width ################# 
-  get_width<-function(){
-    paste(input$widthSlider, "px", sep = "")
-  }
-
-
-  get_content_type <- function(cont) {
-    if(cont == "pdf"){
-      print("application/pdf")
-      return("application/pdf")
-    } 
-    else{
-      print(paste("image/", cont, sep=""))
-      return(paste("image/", cont, sep="")  )
     }
   }
 
@@ -239,13 +222,12 @@ shinyServer(function(input, output,session) {
       }
       else{
         ppi <- input$resSlider
-        png(file,width=input$widthSlider, height=get_height(input$downloadFullSize), res=ppi)
+        x<-get_data_matrix()
+        dif <- nrow(x)
+        png(file, width = input$widthSlider, height=get_height(input$downloadFullSize), res=ppi)#width=input$widthSlider, height=get_height(input$downloadFullSize), res=ppi)
       }
       
       get_heatmap() 
       
-    })#, 
-    
-    #contentType="image/png")#reactive({get_content_type(input$downloadFormat)})) 
-      
+    }) 
   })
