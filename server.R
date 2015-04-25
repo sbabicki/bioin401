@@ -225,7 +225,7 @@ shinyServer(function(input, output,session) {
         ppi <- input$resSlider
         x<-get_data_matrix()
         dif <- nrow(x)
-        png(file, width = input$widthSlider, height=get_height(input$downloadFullSize), res=ppi)#width=input$widthSlider, height=get_height(input$downloadFullSize), res=ppi)
+        png(file, units="in", width = input$widthSlider/72, height=get_height(input$downloadFullSize)/72, res=ppi)#width=input$widthSlider, height=get_height(input$downloadFullSize), res=ppi)
       }
       
       get_heatmap() 
