@@ -152,7 +152,7 @@ shinyServer(function(input, output,session) {
     my_palette <- colorRampPalette(c(input$startColour, "black", input$endColour))(n = input$binSlider)
    
     # maximum number of nested expressions to be evaluated
-    options(expressions = 10000)
+    options(expressions = 500000)
     # create the heatmap
     heatmap.2(heatmapDataMatrix,
               col=my_palette, scale=input$scale, na.color=input$missingDataColour,
