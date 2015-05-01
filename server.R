@@ -148,6 +148,10 @@ shinyServer(function(input, output,session) {
     
     if(is.null(heatmapDataMatrix))
       return(NULL)
+    
+    # https://mintgene.wordpress.com/2012/01/27/heatmaps-controlling-the-color-representation-with-set-data-range/
+    # quantile.range <- quantile(heatmapDataMatrix, probs = seq(0, 1, 0.01))
+    # palette.breaks <- seq(quantile.range["5%"], quantile.range["95%"], 0.1)
     # customize colors
     my_palette <- colorRampPalette(c(input$startColour, "black", input$endColour))(n = input$binSlider)
    
@@ -169,7 +173,7 @@ shinyServer(function(input, output,session) {
               main=input$imageTitle, xlab=input$xaxis, ylab=input$yaxis, 
               #margins = c(5,7), 
               offsetCol = 0, offsetRow = 0, 
-              margins=c(5,10), lhei=c(1,8), lwid=c(0.1,0.5)
+              margins=c(5,10), lhei=c(1,8), lwid=c(0.1,0.5)#, breaks = palette.breaks
               )
     graphics.off()
     #dev.off()
@@ -222,10 +226,7 @@ shinyServer(function(input, output,session) {
         pdf(file, width=input$widthSlider, height=get_height(input$downloadFullSize), paper="a4r")
       }
       else{
-        ppi <- input$resSlider
-        x<-get_data_matrix()
-        dif <- nrow(x)
-        png(file, units="in", width = input$widthSlider/72, height=get_height(input$downloadFullSize)/72, res=ppi)#width=input$widthSlider, height=get_height(input$downloadFullSize), res=ppi)
+        png(file, units="in", width = input$widthSlider/72, height=get_height(input$downloadFullSize)/72, res=input$resSlider)
       }
       
       get_heatmap() 

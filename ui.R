@@ -63,7 +63,7 @@ shinyUI(navbarPage(position = "fixed-top", theme = "theme.css",
             
             conditionalPanel(condition = "input.chooseInput == \'fileUpload\'",
               fileInput('file',
-                      'Upload File',
+                      'Upload File (10MB maximum file size)',
                       accept=c('text/csv','text/comma-separated-values,text/plain','.csv')),
               radioButtons('sep', 
                            'File separator',
@@ -154,7 +154,7 @@ shinyUI(navbarPage(position = "fixed-top", theme = "theme.css",
             
             selectInput("endColour", label = "High Colour", 
                         choices = list( 
-                          "red" = 'red',
+                          "red" = '#FF0000',
                           "orange" = 'orange',
                           "yellow" = 'yellow',
                           "green" = 'green', 
