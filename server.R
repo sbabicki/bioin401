@@ -1,5 +1,6 @@
 library(shiny)
 library(gplots)
+library(ReorderCluster)
 # setwd("~/")
 # runApp("bioin401")
 
@@ -56,8 +57,6 @@ shinyServer(function(input, output,session) {
     nums <- sapply(x, is.numeric)
     y<- x[,nums]
     
-    nonNums <- !sapply(x, is.numeric)
-    omittedCols <- x[,nonNums]
     
     # try to find a column with title name
     name = 'NAME'
@@ -110,30 +109,28 @@ shinyServer(function(input, output,session) {
       "none"
   }
   
-  get_table_data <- function(x){
-#    col <- get_colv()
-#    row <- get_rowv()
-#    if(input$clusterMethod != "none"){
-#     if(col){
- #       col_dist <- dist(x, method=input$distanceMethod)
- #       col_cluster <- hclust(col_dist, method=input$clusterMethod)
- #     }       
-#      if(row){
-#       row_dist <- dist(x, method=input$distanceMethod)
-#        row_cluster <- hclust(row_dist, method=input$clusterMethod)
-#      } 
-#    }
-
-  ## Row clustering (adjust here distance/linkage methods to what you need!)
-  hr <- hclust(as.dist(1-cor(t(x), method="pearson")),
-             method="complete")
-
-  ## Column clustering (adjust here distance/linkage methods to what you need!)
-  hc <- hclust(as.dist(1-cor(x, method="spearman")), method="complete")
-  ## Return matrix with row/column sorting as in heatmap
-  x[rev(hr$labels[hr$order]), hc$labels[hc$order]]
-
-
+  get_table_data <- function(){
+    x<-get_file()
+    x<-remove_strings(x)
+    y<-x
+    if(get_rowv()){
+      nonNums <- !sapply(y, is.numeric)
+      omittedCols <- y[,nonNums]
+      row.order <- hclust(dist(y,method=input$distanceMethod),method=input$clusterMethod)$order
+      y<-x[row.order,]
+    }
+    if(get_colv()){
+      #z<- remove_strings(x)
+      nums <- sapply(x, is.numeric)
+      z<- x[,nums]
+      col.order <- hclust(dist(t(z),method=input$distanceMethod),method=input$clusterMethod)$order
+      
+      nonNums <- !sapply(y, is.numeric)
+      omittedCols <- y[,nonNums]
+      y<-cbind2(omittedCols, z[,col.order])
+    }
+    
+    return(y)
   }
   
   ################# get_heatmap ################# 
@@ -141,7 +138,8 @@ shinyServer(function(input, output,session) {
   get_heatmap<-function(){
     
     # get the data matrix to convert to heatmap
-    heatmapDataMatrix <- get_data_matrix()
+    # na.omit fixes the node stack overflow error
+    heatmapDataMatrix <- get_data_matrix()#na.omit(get_data_matrix())
     colv <- get_colv()
     rowv <- get_rowv()
     dendrogram <- get_dendrogram()
@@ -158,7 +156,8 @@ shinyServer(function(input, output,session) {
     # maximum number of nested expressions to be evaluated
     options(expressions = 500000)
     # create the heatmap
-    heatmap.2(heatmapDataMatrix,
+    tryCatch ({
+      heatmap.2(heatmapDataMatrix,
               col=my_palette, scale=input$scale, na.color=input$missingDataColour,
               key=FALSE, symkey=FALSE, density.info="none", trace="none", 
               Rowv = rowv, Colv = colv, dendrogram = dendrogram, 
@@ -175,7 +174,24 @@ shinyServer(function(input, output,session) {
               offsetCol = 0, offsetRow = 0, 
               margins=c(5,10), lhei=c(1,8), lwid=c(0.1,0.5)#, breaks = palette.breaks
               )
-    graphics.off()
+    }, 
+    # catch node stack overflow
+    error = function (err){
+      heatmapDataMatrix <- data.matrix(get_table_data())
+      heatmap.2(heatmapDataMatrix,
+                col=my_palette, scale=input$scale, na.color=input$missingDataColour,
+                key=FALSE, symkey=FALSE, density.info="none", trace="none", 
+                Rowv = FALSE, Colv = FALSE, dendrogram = "none", 
+                keysize=0.5, cexRow=input$cexRow, 
+                main=input$imageTitle, xlab=input$xaxis, ylab=input$yaxis, 
+                #margins = c(5,7), 
+                offsetCol = 0, offsetRow = 0, 
+                margins=c(5,10), lhei=c(1,8), lwid=c(0.1,0.5))
+    },
+    finally = {
+      graphics.off()
+    }
+    )
     #dev.off()
   }
 
@@ -197,11 +213,11 @@ shinyServer(function(input, output,session) {
   
   ################# Table ################# 
   output$dataTable <- renderTable({
-    fileData <- get_file()
+    fileData <- get_table_data()
     if(is.null(fileData)){
       return(NULL)
     }
-    y <- data.frame(fileData)
+    y <- na.omit(data.frame(fileData))
   })
 
   ################# Heatmap ################# 
