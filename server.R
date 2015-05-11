@@ -147,11 +147,17 @@ shinyServer(function(input, output,session) {
       return(NULL)
     
     # https://mintgene.wordpress.com/2012/01/27/heatmaps-controlling-the-color-representation-with-set-data-range/
-    # quantile.range <- quantile(heatmapDataMatrix, probs = seq(0, 1, 0.01))
-    # palette.breaks <- seq(quantile.range["5%"], quantile.range["95%"], 0.1)
-    # customize colors
-    my_palette <- colorRampPalette(c(input$startColour, "black", input$endColour))(n = input$binSlider)
+    if(input$scale == "none"){
+      quantile.range <- quantile(na.rm = TRUE, heatmapDataMatrix, probs = seq(0, 1, 0.01))
+      breaks <- seq(quantile.range["5%"], quantile.range["95%"], 0.1)
+      my_palette <- colorRampPalette(c(input$startColour, "black", input$endColour))
+    }
+    else{
+      my_palette <- colorRampPalette(c(input$startColour, "black", input$endColour))(n = input$binSlider)
+      breaks <- NULL
+    }
    
+    # cluster rows
     if(rowv){
       row_dist_matrix <- dist(heatmapDataMatrix, method = input$distanceMethod)
       row <- hclust(row_dist_matrix, method = input$clusterMethod)
@@ -161,6 +167,7 @@ shinyServer(function(input, output,session) {
     else
       row <- FALSE
     
+    # cluster cols
     if(colv){
       col_dist_matrix <- dist(t(heatmapDataMatrix), method = input$distanceMethod)
       col <- hclust(col_dist_matrix, method = input$clusterMethod)
@@ -170,47 +177,19 @@ shinyServer(function(input, output,session) {
     else
       col <- FALSE
 
-    
     # maximum number of nested expressions to be evaluated
     options(expressions = 500000)
     # create the heatmap
-    #tryCatch ({
-      heatmap.2(heatmapDataMatrix,
+    heatmap.2(heatmapDataMatrix,
               col=my_palette, scale=input$scale, na.color=input$missingDataColour,
               key=FALSE, symkey=FALSE, density.info="none", trace="none", 
               Rowv = row, Colv = col, dendrogram = dendrogram, 
-#              hclustfun=function(c){
-#                if(input$clusterMethod == "none")
-#                  return("none")
-#                else
-#                  return(hclust(c, method=input$clusterMethod))
-#                }, 
-#              distfun = function(c){dist(c, method=input$distanceMethod)},
               keysize=0.5, cexRow=input$cexRow, 
               main=input$imageTitle, xlab=input$xaxis, ylab=input$yaxis, 
-              #margins = c(5,7), 
               offsetCol = 0, offsetRow = 0, 
-              margins=c(5,10), lhei=c(1,8), lwid=c(0.1,0.5)#, breaks = palette.breaks
+              margins=c(5,10), lhei=c(1,8), lwid=c(0.1,0.5), breaks = breaks
               )
-    #}, 
-    # catch node stack overflow
-    #error = function (err){
-#      heatmapDataMatrix <- data.matrix(get_table_data())
-#      heatmap.2(heatmapDataMatrix,
-#                col=my_palette, scale=input$scale, na.color=input$missingDataColour,
-#                key=FALSE, symkey=FALSE, density.info="none", trace="none", 
-#                Rowv = FALSE, Colv = FALSE, dendrogram = "none", 
-#                keysize=0.5, cexRow=input$cexRow, 
-#                main=input$imageTitle, xlab=input$xaxis, ylab=input$yaxis, 
-#                #margins = c(5,7), 
-#                offsetCol = 0, offsetRow = 0, 
-#                margins=c(5,10), lhei=c(1,8), lwid=c(0.1,0.5))
-#    },
-#    finally = {
-      graphics.off()
-#    }
-#    )
-    #dev.off()
+    graphics.off()
   }
 
   ################# get_height ################# 
