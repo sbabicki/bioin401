@@ -111,7 +111,7 @@ shinyServer(function(input, output,session) {
   
   get_table_data <- function(){
     x<-get_file()
-    x<-remove_strings(x)
+    #x<-remove_strings(x)
     y<-x
     if(get_rowv()){
       nonNums <- !sapply(y, is.numeric)
@@ -188,7 +188,7 @@ shinyServer(function(input, output,session) {
               keysize=0.5, cexRow=input$cexRow, 
               main=input$imageTitle, xlab=input$xaxis, ylab=input$yaxis, 
               offsetCol = 0, offsetRow = 0, 
-              margins=c(5,10), lhei=c(1,8), lwid=c(0.1,0.5), breaks = breaks
+              margins=c(5,10), lhei=c(1,8), lwid=c(0.1,0.5), breaks = breaks 
               )
     graphics.off()
   }

@@ -116,7 +116,7 @@ shinyUI(navbarPage(position = "fixed-top", theme = "theme.css",
                          "row" = 'row',
                          "column" = 'column',
                          "none"='none'),
-                          selected = 'row'),       
+                          selected = 'none'),       
            
            selectInput("cexRow", label = "Row Label Size",
                         choices = list(
