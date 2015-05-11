@@ -18,13 +18,14 @@ shinyServer(function(input, output,session) {
   ################# get_file ################# 
   # retrieves the file input data
   get_file<-reactive({
-    
+    sep=input$sep
     # input$file is NULL before upload
     inFile <- input$file
     path <- inFile$datapath
 
     if(input$chooseInput == 'examples'){
       path <- input$exampleFiles
+      sep <- "\t"
     }
     
     if (is.null(path)){
@@ -35,7 +36,7 @@ shinyServer(function(input, output,session) {
     # data frame with 'name', 'size', 'type', and 'datapath' columns. 
     # 'datapath' column contains the local filenames where the data can be found.
     else{  
-      x <- read.csv(path, header=TRUE, sep=input$sep)
+      x <- read.csv(path, header=TRUE, sep=sep)
       if(input$display == "heatmap")
         y <- remove_strings(x)
       else
@@ -228,14 +229,19 @@ shinyServer(function(input, output,session) {
     filename = "example.txt",
     content = function(file) {write.csv(read.csv(input$exampleFiles, header=TRUE, sep=input$sep), file)})
 
-  ################# Save File ################# 
-  output$downloadData <- downloadHandler(
+  ################# Save File As Table ################# 
+  output$downloadTable <- downloadHandler(
+    filename = "data.txt",
+    content = function(file) {write.table(get_table_data(), file, sep = input$sepSave)}
+    )
+  
+  ################# Save File As Image ################# 
+  output$downloadHeatmap <- downloadHandler(
 
     filename = reactive({paste("heatmap.", input$downloadFormat, sep="")}),
     
     content = function(file) {
       if(input$downloadFormat == "pdf"){
-        #par(mar=c(2.1,2.1,2.1,5.1))
         pdf(file, width=input$widthSlider, height=get_height(input$downloadFullSize), paper="a4r")
       }
       else{

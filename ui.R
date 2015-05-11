@@ -70,9 +70,10 @@ shinyUI(navbarPage(position = "fixed-top", theme = "theme.css",
                            c(Tab='\t', Comma=',', Semicolon=';'),
                            '\t'))),
 
-          ########## Analysis tab ##########  
-          tabPanel(title = "Analysis",
+          ########## Data tab ##########  
+          tabPanel(title = "Data",
             h3("Analysis:"),
+            
             selectInput("clusterMethod", label = "Clustering Method", 
                         choices = list( 
                           "none" = 'none',
@@ -87,10 +88,10 @@ shinyUI(navbarPage(position = "fixed-top", theme = "theme.css",
                              strong("Apply Clustering To"),
                              checkboxInput('rowv', 'Rows', FALSE),
                              checkboxInput('colv', 'Columns', FALSE),
-                             
+                        conditionalPanel(condition = "input.display == 'heatmap'",
                              strong("Show Dendrogram"),
                              checkboxInput('dendRow', 'Rows', FALSE),
-                             checkboxInput('dendCol', 'Columns', FALSE)),
+                             checkboxInput('dendCol', 'Columns', FALSE))),
             
             selectInput("distanceMethod", label = "Distance Measurement Method", 
                         choices = list( 
@@ -98,12 +99,10 @@ shinyUI(navbarPage(position = "fixed-top", theme = "theme.css",
                           "manhattan" = 'manhattan'), #aka city block
                         selected = 'none'), 
             
-            selectInput("scale", label = "Scale Type", 
-                        choices = list(
-                          "row" = 'row',
-                          "column" = 'column',
-                          "none"='none'),
-                        selected = 'row')
+            radioButtons('display', 'Display As',
+                         c("Heatmap"='heatmap', "Table (original data input only)"='table'),
+                         'heatmap')
+            
             ),  
                  
                  
@@ -111,10 +110,14 @@ shinyUI(navbarPage(position = "fixed-top", theme = "theme.css",
           tabPanel(title =  "Image",
             h3("Customize Image:"),
             
-            radioButtons('display', 'Display',
-                         c("Heatmap"='heatmap', "Table (original data input only)"='table'),
-                         'heatmap'),
-          conditionalPanel(condition = "input.display == 'heatmap'",        
+          conditionalPanel(condition = "input.display == 'heatmap'",  
+           selectInput("scale", label = "Scale Type", 
+                         choices = list(
+                         "row" = 'row',
+                         "column" = 'column',
+                         "none"='none'),
+                          selected = 'row'),       
+           
            selectInput("cexRow", label = "Row Label Size",
                         choices = list(
                         "extra large" = 2,
@@ -172,20 +175,28 @@ shinyUI(navbarPage(position = "fixed-top", theme = "theme.css",
           
           ########## Save options ##########  
           tabPanel(title = "Save",
-            h3("Save Output:"),
-            radioButtons('downloadFormat', 
+            h3("Save Output As Heatmap:"),
+            
+              radioButtons('downloadFormat', 
                          'File Format',
                          c("PNG"='png', "PDF"='pdf'),
                          'png'),
             
-            conditionalPanel(condition="input.downloadFormat=='png'", 
+              conditionalPanel(condition="input.downloadFormat=='png'", 
                         strong("PNG Size"),
                         checkboxInput('downloadFullSize', 'Download Full Size', TRUE),
                         sliderInput("resSlider", "PNG Resolution (in ppi)",
                         min = 72, max = 600, value = 72)),
             
-            downloadButton(class='btn-info', outputId = 'downloadData', 'Save Image As')))
-  )))),
+              downloadButton(class='btn-info', outputId = 'downloadHeatmap', 'Save Image As'),
+            h3("Save Output As Table:"),
+              
+              radioButtons('sepSave', 
+                           'File separator',
+                           c(Tab='\t', Comma=',', Semicolon=';'),
+                           '\t'), 
+              downloadButton(class='btn-info', outputId = 'downloadTable', 'Save Table As')    
+            )))))),
   
   #################### Gallery Tab ####################
   tabPanel("Gallery",
