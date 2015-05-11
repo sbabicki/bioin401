@@ -57,7 +57,6 @@ shinyServer(function(input, output,session) {
     nums <- sapply(x, is.numeric)
     y<- x[,nums]
     
-    
     # try to find a column with title name
     name = 'NAME'
     tryCatch({
@@ -153,45 +152,64 @@ shinyServer(function(input, output,session) {
     # customize colors
     my_palette <- colorRampPalette(c(input$startColour, "black", input$endColour))(n = input$binSlider)
    
+    if(rowv){
+      row_dist_matrix <- dist(heatmapDataMatrix, method = input$distanceMethod)
+      row <- hclust(row_dist_matrix, method = input$clusterMethod)
+      heatmapDataMatrix <- heatmapDataMatrix[row$order,]
+      row <- as.dendrogram(row)
+    }
+    else
+      row <- FALSE
+    
+    if(colv){
+      col_dist_matrix <- dist(t(heatmapDataMatrix), method = input$distanceMethod)
+      col <- hclust(col_dist_matrix, method = input$clusterMethod)
+      heatmapDataMatrix <- heatmapDataMatrix[,col$order]
+      col <- as.dendrogram(col)
+    }
+    else
+      col <- FALSE
+
+    
     # maximum number of nested expressions to be evaluated
     options(expressions = 500000)
     # create the heatmap
-    tryCatch ({
+    #tryCatch ({
       heatmap.2(heatmapDataMatrix,
               col=my_palette, scale=input$scale, na.color=input$missingDataColour,
               key=FALSE, symkey=FALSE, density.info="none", trace="none", 
-              Rowv = rowv, Colv = colv, dendrogram = dendrogram, 
-              hclustfun=function(c){
-                if(input$clusterMethod == "none")
-                  return("none")
-                else
-                  return(hclust(c, method=input$clusterMethod))
-                }, 
-              distfun = function(c){dist(c, method=input$distanceMethod)},
+              Rowv = row, Colv = col, dendrogram = dendrogram, 
+#              hclustfun=function(c){
+#                if(input$clusterMethod == "none")
+#                  return("none")
+#                else
+#                  return(hclust(c, method=input$clusterMethod))
+#                }, 
+#              distfun = function(c){dist(c, method=input$distanceMethod)},
               keysize=0.5, cexRow=input$cexRow, 
               main=input$imageTitle, xlab=input$xaxis, ylab=input$yaxis, 
               #margins = c(5,7), 
               offsetCol = 0, offsetRow = 0, 
               margins=c(5,10), lhei=c(1,8), lwid=c(0.1,0.5)#, breaks = palette.breaks
               )
-    }, 
+    #}, 
     # catch node stack overflow
-    error = function (err){
-      heatmapDataMatrix <- data.matrix(get_table_data())
-      heatmap.2(heatmapDataMatrix,
-                col=my_palette, scale=input$scale, na.color=input$missingDataColour,
-                key=FALSE, symkey=FALSE, density.info="none", trace="none", 
-                Rowv = FALSE, Colv = FALSE, dendrogram = "none", 
-                keysize=0.5, cexRow=input$cexRow, 
-                main=input$imageTitle, xlab=input$xaxis, ylab=input$yaxis, 
-                #margins = c(5,7), 
-                offsetCol = 0, offsetRow = 0, 
-                margins=c(5,10), lhei=c(1,8), lwid=c(0.1,0.5))
-    },
-    finally = {
+    #error = function (err){
+#      heatmapDataMatrix <- data.matrix(get_table_data())
+#      heatmap.2(heatmapDataMatrix,
+#                col=my_palette, scale=input$scale, na.color=input$missingDataColour,
+#                key=FALSE, symkey=FALSE, density.info="none", trace="none", 
+#                Rowv = FALSE, Colv = FALSE, dendrogram = "none", 
+#                keysize=0.5, cexRow=input$cexRow, 
+#                main=input$imageTitle, xlab=input$xaxis, ylab=input$yaxis, 
+#                #margins = c(5,7), 
+#                offsetCol = 0, offsetRow = 0, 
+#                margins=c(5,10), lhei=c(1,8), lwid=c(0.1,0.5))
+#    },
+#    finally = {
       graphics.off()
-    }
-    )
+#    }
+#    )
     #dev.off()
   }
 
