@@ -1,6 +1,6 @@
 library(shiny)
 library(gplots)
-library(ReorderCluster)
+
 # setwd("~/")
 # runApp("bioin401")
 
@@ -18,11 +18,14 @@ shinyServer(function(input, output,session) {
   ################# get_file ################# 
   # retrieves the file input data
   get_file<-reactive({
-    sep=input$sep
+    
+    sep = input$sep
+    
     # input$file is NULL before upload
     inFile <- input$file
     path <- inFile$datapath
 
+    # if user chooses example file
     if(input$chooseInput == 'examples'){
       path <- input$exampleFiles
       sep <- "\t"
@@ -32,28 +35,29 @@ shinyServer(function(input, output,session) {
       return(NULL)
     }
 
-    # file has been uploaded
+    # if file has been uploaded
     # data frame with 'name', 'size', 'type', and 'datapath' columns. 
     # 'datapath' column contains the local filenames where the data can be found.
     else{  
-      x <- read.csv(path, header=TRUE, sep=sep)
+      file_content <- read.csv(path, header=TRUE, sep=sep)
       if(input$display == "heatmap")
-        y <- remove_strings(x)
+        data <- remove_strings(file_content)
       else
-        y <- x
+        data <- file_content
     }
     
-    if (is.null(y)){
+    if (is.null(data)){
       return(NULL)
     }
     
     # return the non empty file
     else{
-      return(y)
+      return(data)
     }
   })
   
   ################# remove_strings ################# 
+  # removes strings from file content and assigns the 'NAME' column as the row labels
   remove_strings<-function(x){
     nums <- sapply(x, is.numeric)
     y<- x[,nums]
@@ -82,6 +86,7 @@ shinyServer(function(input, output,session) {
   }
   
   ################# get_colv #################
+  # boolean, true if cluster col is selected in ui.r
   get_colv <- function(){
     if(input$clusterMethod == 'none')
       FALSE
@@ -90,6 +95,7 @@ shinyServer(function(input, output,session) {
   }
   
   ################# get_rowv #################
+  # boolean, true if cluster row is selected in ui.r
   get_rowv <- function(){
     if(input$clusterMethod == 'none')
       FALSE
@@ -98,6 +104,7 @@ shinyServer(function(input, output,session) {
   }
   
   ################# get_dendrogram ################# 
+  # returns 'both', 'column', 'row', or 'none'; depending on the slider settings in ui.r
   get_dendrogram <- function(){
     if(input$dendCol && input$dendRow)
       "both"
@@ -109,6 +116,8 @@ shinyServer(function(input, output,session) {
       "none"
   }
   
+  ################# get_table_data #################
+  # clusters and returns data for displaying when table option is selected in ui.r
   get_table_data <- function(){
     
     data <- get_file()
@@ -124,39 +133,22 @@ shinyServer(function(input, output,session) {
       row <- hclust(row_dist_matrix, method = input$clusterMethod)
       data <- data[row$order,]
     }
-    else
-      row <- FALSE
     
     # cluster cols
     if(colv){
-      col_dist_matrix <- dist(t(data), method = input$distanceMethod)
-      col <- hclust(col_dist_matrix, method = input$clusterMethod)
-      data <- data[,col$order]
-    }
-    return(data)
-  }
-  
-  get_table_data2 <- function(){
-    x<-get_file()
-    y<-x
-    
-    if(get_rowv()){
-      row_dist_matrix <- dist(y, method = input$distanceMethod)
-      row <- hclust(row_dist_matrix, method = input$clusterMethod)
-      #row.order <- hclust(dist(y,method=input$distanceMethod),method=input$clusterMethod)$order
-      y<-x[row$order,]
-    }
-    if(get_colv()){
-      nums <- sapply(x, is.numeric)
-      z<- x[,nums]
-      col.order <- hclust(dist(t(z),method=input$distanceMethod),method=input$clusterMethod)$order
       
-      #nonNums <- !sapply(y, is.numeric)
-      #omittedCols <- y[,nonNums]
-      #y<-cbind2(omittedCols, z[,col.order])
+      # only cluster cols with numbers
+      nums <- sapply(data, is.numeric)
+      numericCols <- data[,nums]
+      nonNums <- !sapply(data, is.numeric)
+      omittedCols <- data[,nonNums]
+      
+      col_dist_matrix <- dist(t(numericCols), method = input$distanceMethod)
+      col <- hclust(col_dist_matrix, method = input$clusterMethod)
+      data <- cbind2(omittedCols, numericCols[,col$order])
     }
     
-    return(y)
+    return(data)
   }
   
   ################# get_heatmap ################# 
@@ -172,6 +164,7 @@ shinyServer(function(input, output,session) {
     if(is.null(heatmapDataMatrix))
       return(NULL)
     
+    # makes heatmap brighter when scale is 'none'
     # https://mintgene.wordpress.com/2012/01/27/heatmaps-controlling-the-color-representation-with-set-data-range/
     if(input$scale == "none"){
       quantile.range <- quantile(na.rm = TRUE, heatmapDataMatrix, probs = seq(0, 1, 0.01))
@@ -187,7 +180,6 @@ shinyServer(function(input, output,session) {
     if(rowv){
       row_dist_matrix <- dist(heatmapDataMatrix, method = input$distanceMethod)
       row <- hclust(row_dist_matrix, method = input$clusterMethod)
-      #heatmapDataMatrix <- heatmapDataMatrix[row$order,]
       row <- as.dendrogram(row)
     }
     else
@@ -197,7 +189,6 @@ shinyServer(function(input, output,session) {
     if(colv){
       col_dist_matrix <- dist(t(heatmapDataMatrix), method = input$distanceMethod)
       col <- hclust(col_dist_matrix, method = input$clusterMethod)
-      #heatmapDataMatrix <- heatmapDataMatrix[,col$order]
       col <- as.dendrogram(col)
     }
     else
@@ -219,7 +210,8 @@ shinyServer(function(input, output,session) {
   }
 
   ################# get_height ################# 
-  get_height<-function(cond){
+  # calculate the height based on matrix dimentions and current width
+  get_height<-function(cond, x){
     x<-get_data_matrix()
     if(is.null(x))
       return(0)
@@ -234,7 +226,7 @@ shinyServer(function(input, output,session) {
 
   ########################################### OUTPUT ###########################################
   
-  ################# Table ################# 
+  ################# Display Table ################# 
   output$dataTable <- renderTable({
     fileData <- get_table_data()
     if(is.null(fileData)){
@@ -243,7 +235,7 @@ shinyServer(function(input, output,session) {
     y <- fileData
   })
 
-  ################# Heatmap ################# 
+  ################# Display Heatmap ################# 
   output$heatmap <- renderPlot(
       get_heatmap(), 
       height=reactive({get_height(input$previewFullSize)}), 

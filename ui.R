@@ -100,7 +100,7 @@ shinyUI(navbarPage(position = "fixed-top", theme = "theme.css",
                         selected = 'none'), 
             
             radioButtons('display', 'Display As',
-                         c("Heatmap"='heatmap', "Table (original data input only)"='table'),
+                         c("Heatmap"='heatmap', "Table"='table'),
                          'heatmap')
             
             ),  
