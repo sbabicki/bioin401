@@ -110,24 +110,50 @@ shinyServer(function(input, output,session) {
   }
   
   get_table_data <- function(){
+    
+    data <- get_file()
+    colv <- get_colv()
+    rowv <- get_rowv()
+    
+    if(is.null(data))
+      return(NULL)
+    
+    # cluster rows
+    if(rowv){
+      row_dist_matrix <- dist(data, method = input$distanceMethod)
+      row <- hclust(row_dist_matrix, method = input$clusterMethod)
+      data <- data[row$order,]
+    }
+    else
+      row <- FALSE
+    
+    # cluster cols
+    if(colv){
+      col_dist_matrix <- dist(t(data), method = input$distanceMethod)
+      col <- hclust(col_dist_matrix, method = input$clusterMethod)
+      data <- data[,col$order]
+    }
+    return(data)
+  }
+  
+  get_table_data2 <- function(){
     x<-get_file()
-    #x<-remove_strings(x)
     y<-x
+    
     if(get_rowv()){
-      nonNums <- !sapply(y, is.numeric)
-      omittedCols <- y[,nonNums]
-      row.order <- hclust(dist(y,method=input$distanceMethod),method=input$clusterMethod)$order
-      y<-x[row.order,]
+      row_dist_matrix <- dist(y, method = input$distanceMethod)
+      row <- hclust(row_dist_matrix, method = input$clusterMethod)
+      #row.order <- hclust(dist(y,method=input$distanceMethod),method=input$clusterMethod)$order
+      y<-x[row$order,]
     }
     if(get_colv()){
-      #z<- remove_strings(x)
       nums <- sapply(x, is.numeric)
       z<- x[,nums]
       col.order <- hclust(dist(t(z),method=input$distanceMethod),method=input$clusterMethod)$order
       
-      nonNums <- !sapply(y, is.numeric)
-      omittedCols <- y[,nonNums]
-      y<-cbind2(omittedCols, z[,col.order])
+      #nonNums <- !sapply(y, is.numeric)
+      #omittedCols <- y[,nonNums]
+      #y<-cbind2(omittedCols, z[,col.order])
     }
     
     return(y)
@@ -138,8 +164,7 @@ shinyServer(function(input, output,session) {
   get_heatmap<-function(){
     
     # get the data matrix to convert to heatmap
-    # na.omit fixes the node stack overflow error
-    heatmapDataMatrix <- get_data_matrix()#na.omit(get_data_matrix())
+    heatmapDataMatrix <- get_data_matrix()
     colv <- get_colv()
     rowv <- get_rowv()
     dendrogram <- get_dendrogram()
@@ -162,7 +187,7 @@ shinyServer(function(input, output,session) {
     if(rowv){
       row_dist_matrix <- dist(heatmapDataMatrix, method = input$distanceMethod)
       row <- hclust(row_dist_matrix, method = input$clusterMethod)
-      heatmapDataMatrix <- heatmapDataMatrix[row$order,]
+      #heatmapDataMatrix <- heatmapDataMatrix[row$order,]
       row <- as.dendrogram(row)
     }
     else
@@ -172,7 +197,7 @@ shinyServer(function(input, output,session) {
     if(colv){
       col_dist_matrix <- dist(t(heatmapDataMatrix), method = input$distanceMethod)
       col <- hclust(col_dist_matrix, method = input$clusterMethod)
-      heatmapDataMatrix <- heatmapDataMatrix[,col$order]
+      #heatmapDataMatrix <- heatmapDataMatrix[,col$order]
       col <- as.dendrogram(col)
     }
     else
@@ -185,7 +210,7 @@ shinyServer(function(input, output,session) {
               col=my_palette, scale=input$scale, na.color=input$missingDataColour,
               key=FALSE, symkey=FALSE, density.info="none", trace="none", 
               Rowv = row, Colv = col, dendrogram = dendrogram, 
-              keysize=0.5, cexRow=input$cexRow, 
+              keysize=0.5, cexRow=input$cexRow, #cellnote=heatmapDataMatrix,
               main=input$imageTitle, xlab=input$xaxis, ylab=input$yaxis, 
               offsetCol = 0, offsetRow = 0, 
               margins=c(5,10), lhei=c(1,8), lwid=c(0.1,0.5), breaks = breaks 
@@ -215,7 +240,7 @@ shinyServer(function(input, output,session) {
     if(is.null(fileData)){
       return(NULL)
     }
-    y <- na.omit(data.frame(fileData))
+    y <- fileData
   })
 
   ################# Heatmap ################# 
