@@ -39,11 +39,9 @@ shinyServer(function(input, output,session) {
     # data frame with 'name', 'size', 'type', and 'datapath' columns. 
     # 'datapath' column contains the local filenames where the data can be found.
     else{  
-      file_content <- read.csv(path, header=TRUE, sep=sep)
+      data <- read.csv(path, header=TRUE, sep=sep)
       if(input$display == "heatmap")
-        data <- remove_strings(file_content)
-      else
-        data <- file_content
+        data <- remove_strings(data)
     }
     
     if (is.null(data)){
@@ -155,6 +153,9 @@ shinyServer(function(input, output,session) {
   # returns a heatmap created from the file input data
   get_heatmap<-function(){
     
+    # maximum number of nested expressions to be evaluated
+    options(expressions = 500000)
+    
     # get the data matrix to convert to heatmap
     heatmapDataMatrix <- get_data_matrix()
     colv <- get_colv()
@@ -194,8 +195,6 @@ shinyServer(function(input, output,session) {
     else
       col <- FALSE
 
-    # maximum number of nested expressions to be evaluated
-    options(expressions = 500000)
     # create the heatmap
     heatmap.2(heatmapDataMatrix,
               col=my_palette, scale=input$scale, na.color=input$missingDataColour,
