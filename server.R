@@ -1,6 +1,7 @@
 library(shiny)
 library(gplots)
-
+library(Rclusterpp)
+library(pryr)
 # setwd("~/")
 # runApp("bioin401")
 
@@ -153,6 +154,9 @@ shinyServer(function(input, output,session) {
   # returns a heatmap created from the file input data
   get_heatmap<-function(){
     
+write("mem used start heatmap", stderr())
+write(mem_used(),stderr())    
+
     # maximum number of nested expressions to be evaluated
     options(expressions = 500000)
     
@@ -161,7 +165,6 @@ shinyServer(function(input, output,session) {
     colv <- get_colv()
     rowv <- get_rowv()
     dendrogram <- get_dendrogram()
-    
     if(is.null(heatmapDataMatrix))
       return(NULL)
     
@@ -176,12 +179,31 @@ shinyServer(function(input, output,session) {
       my_palette <- colorRampPalette(c(input$startColour, "black", input$endColour))(n = input$binSlider)
       breaks <- NULL
     }
-   
+write("heatmap_data_matrix", stderr())
+write(object.size(heatmapDataMatrix), stderr())   
+
+write("mem used before cluster heatmap", stderr())
+write(mem_used(),stderr())    
+
+#write("AT ROWV", stderr())
     # cluster rows
     if(rowv){
+      #row <- Rclusterpp.hclust(heatmapDataMatrix, method=input$clusterMethod, distance=input$distanceMethod)
       row_dist_matrix <- dist(heatmapDataMatrix, method = input$distanceMethod)
+#write("AFTER ROWV", stderr())
+      
+write("row_dist_mat", stderr())
+write(object.size(row_dist_matrix), stderr())
+      
       row <- hclust(row_dist_matrix, method = input$clusterMethod)
+      
+write("row", stderr())
+write(object.size(row), stderr())
       row <- as.dendrogram(row)
+
+write("all (row+dist+matrix)", stderr())
+write((object.size(row)+object.size(row_dist_matrix)+object.size(heatmapDataMatrix)), stderr())
+
     }
     else
       row <- FALSE
@@ -205,6 +227,8 @@ shinyServer(function(input, output,session) {
               offsetCol = 0, offsetRow = 0, 
               margins=c(5,10), lhei=c(1,8), lwid=c(0.1,0.5), breaks = breaks 
               )
+write("mem used end heatmap", stderr())
+write(mem_used(),stderr())    
     graphics.off()
   }
 
