@@ -1,6 +1,6 @@
 library(shiny)
 library(gplots)
-library(Rclusterpp)
+# library(Rclusterpp)
 library(pryr)
 # setwd("~/")
 # runApp("bioin401")
@@ -188,7 +188,7 @@ write(mem_used(),stderr())
 #write("AT ROWV", stderr())
     # cluster rows
     if(rowv){
-      #row <- Rclusterpp.hclust(heatmapDataMatrix, method=input$clusterMethod, distance=input$distanceMethod)
+#row <- Rclusterpp.hclust(heatmapDataMatrix, method=input$clusterMethod, distance=input$distanceMethod)
       row_dist_matrix <- dist(heatmapDataMatrix, method = input$distanceMethod)
 #write("AFTER ROWV", stderr())
       
