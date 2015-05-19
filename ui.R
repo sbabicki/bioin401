@@ -71,7 +71,7 @@ shinyUI(navbarPage(position = "fixed-top", theme = "theme.css",
                            '\t'))),
 
           ########## Data tab ##########  
-          tabPanel(title = "Data",
+          tabPanel(title = "Analysis",
             h3("Analysis:"),
             
             selectInput("clusterMethod", label = "Clustering Method", 
@@ -96,7 +96,8 @@ shinyUI(navbarPage(position = "fixed-top", theme = "theme.css",
             selectInput("distanceMethod", label = "Distance Measurement Method", 
                         choices = list( 
                           "euclidean" = 'euclidean',
-                          "manhattan" = 'manhattan'), #aka city block
+                          "manhattan" = 'manhattan', #aka city block
+                          "pearson" = 'pearson'), 
                         selected = 'none'), 
             
             radioButtons('display', 'Display As',

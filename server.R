@@ -1,7 +1,8 @@
 library(shiny)
 library(gplots)
-# library(Rclusterpp)
+library(ctc)
 library(pryr)
+library(hyperSpec)
 # setwd("~/")
 # runApp("bioin401")
 
@@ -20,7 +21,7 @@ shinyServer(function(input, output,session) {
   # retrieves the file input data
   get_file<-reactive({
     
-    sep = input$sep
+		sep = input$sep
     
     # input$file is NULL before upload
     inFile <- input$file
@@ -115,6 +116,29 @@ shinyServer(function(input, output,session) {
       "none"
   }
   
+  ################# get_dist #################
+  # calculates a distance matrix 
+  get_dist <- function(x){
+  	if(input$distanceMethod == 'pearson'){
+  		return(pearson.dist(x))
+  	}
+  	else{
+  		return(dist(x, method = input$distanceMethod))
+  	}
+  }
+  
+  ################# get_hclust #################
+  # uses hclust to cluster data using get_dist distance matrix
+  get_hclust <- function(x){
+
+		write("hclust", stderr()) ################################################### DEBUG ##
+
+  	x <- hclust(get_dist(x), method = input$clusterMethod)
+
+		write(object.size(x), stderr()) ############################################# DEBUG ##
+  	return(x)
+  }
+  
   ################# get_table_data #################
   # clusters and returns data for displaying when table option is selected in ui.r
   get_table_data <- function(){
@@ -122,14 +146,15 @@ shinyServer(function(input, output,session) {
     data <- get_file()
     colv <- get_colv()
     rowv <- get_rowv()
+    write("get_dist", stderr()) ################################################# DEBUG ##
     
+    write(object.size(x), stderr()) ############################################# DEBUG ##
     if(is.null(data))
       return(NULL)
     
     # cluster rows
     if(rowv){
-      row_dist_matrix <- dist(data, method = input$distanceMethod)
-      row <- hclust(row_dist_matrix, method = input$clusterMethod)
+      row <- get_hclust(data)
       data <- data[row$order,]
     }
     
@@ -142,8 +167,7 @@ shinyServer(function(input, output,session) {
       nonNums <- !sapply(data, is.numeric)
       omittedCols <- data[,nonNums]
       
-      col_dist_matrix <- dist(t(numericCols), method = input$distanceMethod)
-      col <- hclust(col_dist_matrix, method = input$clusterMethod)
+      col <- get_hclust(t(data))
       data <- cbind2(omittedCols, numericCols[,col$order])
     }
     
@@ -154,8 +178,8 @@ shinyServer(function(input, output,session) {
   # returns a heatmap created from the file input data
   get_heatmap<-function(){
     
-write("mem used start heatmap", stderr())
-write(mem_used(),stderr())    
+		write("mem used start heatmap", stderr()) ##################################### DEBUG ##
+		write(mem_used(),stderr()) #################################################### DEBUG ##
 
     # maximum number of nested expressions to be evaluated
     options(expressions = 500000)
@@ -179,43 +203,30 @@ write(mem_used(),stderr())
       my_palette <- colorRampPalette(c(input$startColour, "black", input$endColour))(n = input$binSlider)
       breaks <- NULL
     }
-write("heatmap_data_matrix", stderr())
-write(object.size(heatmapDataMatrix), stderr())   
+		write("heatmap_data_matrix", stderr()) ######################################## DEBUG ##
+		write(object.size(heatmapDataMatrix), stderr()) ############################### DEBUG ##
 
-write("mem used before cluster heatmap", stderr())
-write(mem_used(),stderr())    
+		write("mem used before cluster heatmap", stderr()) ############################ DEBUG ##
+		write(mem_used(),stderr()) #################################################### DEBUG ##
 
-#write("AT ROWV", stderr())
-    # cluster rows
+		# cluster cols
     if(rowv){
-#row <- Rclusterpp.hclust(heatmapDataMatrix, method=input$clusterMethod, distance=input$distanceMethod)
-      row_dist_matrix <- dist(heatmapDataMatrix, method = input$distanceMethod)
-#write("AFTER ROWV", stderr())
-      
-write("row_dist_mat", stderr())
-write(object.size(row_dist_matrix), stderr())
-      
-      row <- hclust(row_dist_matrix, method = input$clusterMethod)
-      
-write("row", stderr())
-write(object.size(row), stderr())
-      row <- as.dendrogram(row)
+			write("clustering rows", stderr()) ########################################## DEBUG ##
 
-write("all (row+dist+matrix)", stderr())
-write((object.size(row)+object.size(row_dist_matrix)+object.size(heatmapDataMatrix)), stderr())
-
+    	row <- as.dendrogram(get_hclust(heatmapDataMatrix))
     }
-    else
-      row <- FALSE
-    
+    else{
+    	row <- FALSE
+    }
+
     # cluster cols
     if(colv){
-      col_dist_matrix <- dist(t(heatmapDataMatrix), method = input$distanceMethod)
-      col <- hclust(col_dist_matrix, method = input$clusterMethod)
-      col <- as.dendrogram(col)
+			write("clustering cols", stderr()) ########################################## DEBUG ##   	
+      col <- as.dendrogram(get_hclust(t(heatmapDataMatrix)))
     }
-    else
-      col <- FALSE
+    else{
+    	col <- FALSE
+    }
 
     # create the heatmap
     heatmap.2(heatmapDataMatrix,
@@ -227,9 +238,10 @@ write((object.size(row)+object.size(row_dist_matrix)+object.size(heatmapDataMatr
               offsetCol = 0, offsetRow = 0, 
               margins=c(5,10), lhei=c(1,8), lwid=c(0.1,0.5), breaks = breaks 
               )
-write("mem used end heatmap", stderr())
-write(mem_used(),stderr())    
-    graphics.off()
+		write("mem used end heatmap", stderr()) ###################################### DEBUG ##
+		write(mem_used(),stderr()) ################################################### DEBUG ##
+    
+		graphics.off()
   }
 
   ################# get_height ################# 
@@ -272,7 +284,10 @@ write(mem_used(),stderr())
   ################# Save File As Table ################# 
   output$downloadTable <- downloadHandler(
     filename = "data.txt",
-    content = function(file) {write.table(get_table_data(), file, sep = input$sepSave)}
+    content = function(file) {
+    	
+    	write.table(get_table_data(), file, sep = input$sepSave)
+  	}
     )
   
   ################# Save File As Image ################# 
