@@ -10,8 +10,8 @@ library(hyperSpec)
 # shinyapps::terminateApp('bioin401')
 # https://www.shinyapps.io/admin/#/dashboard
 
-#max upload size is 10MB
-options(shiny.maxRequestSize=10*1024^2)
+#max upload size is 4MB
+options(shiny.maxRequestSize=4*1024^2)
 
 shinyServer(function(input, output,session) {
 
@@ -311,7 +311,7 @@ shinyServer(function(input, output,session) {
     
     content = function(file) {
       if(input$downloadFormat == "pdf"){
-        pdf(file, width=input$widthSlider, height=get_height(input$downloadFullSize), paper="a4r")
+        pdf(file, width=input$widthSlider/72, height=get_height(input$downloadFullSize)/72)
       }
       else{
         png(file, units="in", width = input$widthSlider/72, height=get_height(input$downloadFullSize)/72, res=input$resSlider)

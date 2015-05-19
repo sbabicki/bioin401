@@ -182,10 +182,8 @@ shinyUI(navbarPage(position = "fixed-top", theme = "theme.css",
                          'File Format',
                          c("PNG"='png', "PDF"='pdf'),
                          'png'),
-            
+            	checkboxInput('downloadFullSize', 'Download Full Size', TRUE),
               conditionalPanel(condition="input.downloadFormat=='png'", 
-                        strong("PNG Size"),
-                        checkboxInput('downloadFullSize', 'Download Full Size', TRUE),
                         sliderInput("resSlider", "PNG Resolution (in ppi)",
                         min = 72, max = 600, value = 72)),
             
