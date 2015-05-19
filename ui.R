@@ -191,9 +191,8 @@ shinyUI(navbarPage(position = "fixed-top", theme = "theme.css",
             
               downloadButton(class='btn-info', outputId = 'downloadHeatmap', 'Save Image As'),
             h3("Save Output As Table:"),
-              
               radioButtons('sepSave', 
-                           'File separator',
+                           'File separator for text file',
                            c(Tab='\t', Comma=',', Semicolon=';'),
                            '\t'), 
               downloadButton(class='btn-info', outputId = 'downloadTable', 'Save Table As')    

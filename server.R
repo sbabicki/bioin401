@@ -283,10 +283,28 @@ shinyServer(function(input, output,session) {
 
   ################# Save File As Table ################# 
   output$downloadTable <- downloadHandler(
-    filename = "data.txt",
+    filename = function (){
+    	return("cluster_files.zip")},
     content = function(file) {
-    	
-    	write.table(get_table_data(), file, sep = input$sepSave)
+    	tmpdir <- tempdir()
+    	setwd(tempdir())
+    	print(tempdir())
+    	data <- get_data_matrix()
+    	fs <- c("text_file.txt")
+    	write.table(get_table_data(), "text_file.txt", sep = input$sepSave)
+    	if(get_colv() || get_rowv()){
+    		r2cdt(hr=get_hclust(data),hc=get_hclust(t(data)),data,labels=FALSE,description=FALSE,file="cluster.cdt",dec='.')
+    		fs <- c(fs, "cluster.cdt")
+    	}
+    	if(get_colv()){
+    		r2atr(hc=get_hclust(t(data)),file="cluster.atr",distance=input$distanceMethod,dec='.',digits=5)
+    		fs <- c(fs, "cluster.atr")
+    	}
+    	if(get_rowv()){
+    		r2gtr(hr=get_hclust(data),file="cluster.gtr",distance=input$distanceMethod,dec='.',digits=5)
+    		fs <- c(fs, "cluster.gtr")
+    	}
+    	zip(zipfile=file, files=fs)
   	}
     )
   
