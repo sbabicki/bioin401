@@ -63,7 +63,7 @@ shinyUI(navbarPage(position = "fixed-top", theme = "theme.css",
             
             conditionalPanel(condition = "input.chooseInput == \'fileUpload\'",
               fileInput('file',
-                      'Upload File (10MB maximum file size)',
+                      'Upload File (4MB maximum file size)',
                       accept=c('text/csv','text/comma-separated-values,text/plain','.csv')),
               radioButtons('sep', 
                            'File separator',

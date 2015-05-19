@@ -2,7 +2,8 @@ library(shiny)
 library(gplots)
 library(ctc)
 library(pryr)
-library(hyperSpec)
+#library(hyperSpec)
+
 # setwd("~/")
 # runApp("bioin401")
 
@@ -131,11 +132,20 @@ shinyServer(function(input, output,session) {
   # uses hclust to cluster data using get_dist distance matrix
   get_hclust <- function(x){
 
-		write("hclust", stderr()) ################################################### DEBUG ##
-
-  	x <- hclust(get_dist(x), method = input$clusterMethod)
-
+		write("get_dist x", stderr()) ################################################### DEBUG ##
+		x <- get_dist(x)
 		write(object.size(x), stderr()) ############################################# DEBUG ##
+		
+		write("mem_used", stderr()) ################################################### DEBUG ##
+		write(mem_used(), stderr()) ############################################# DEBUG ##
+		
+		write("get_hclust x", stderr()) ################################################### DEBUG ##
+		x <- hclust(x, method = input$clusterMethod)
+		write(object.size(x), stderr()) ############################################# DEBUG ##
+		
+		write("mem_used", stderr()) ################################################### DEBUG ##
+		write(mem_used(), stderr()) ############################################# DEBUG ##
+		
   	return(x)
   }
   
@@ -314,9 +324,9 @@ shinyServer(function(input, output,session) {
         pdf(file, width=input$widthSlider/72, height=get_height(input$downloadFullSize)/72)
       }
       else{
-        png(file, units="in", width = input$widthSlider/72, height=get_height(input$downloadFullSize)/72, res=input$resSlider)
+        png(file, units="in", width = input$widthSlider/72, height=get_height(input$downloadFullSize)/72, res=input$resSlider,type = "cairo")            
       }
-      
+  
       get_heatmap() 
       
     }) 
