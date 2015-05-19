@@ -142,35 +142,38 @@ shinyServer(function(input, output,session) {
   ################# get_table_data #################
   # clusters and returns data for displaying when table option is selected in ui.r
   get_table_data <- function(){
-    
+  	write("get_table_data", stderr()) ################################################### DEBUG ##
+  	write("get_file", stderr()) ################################################### DEBUG ##
     data <- get_file()
+  	write("get_colv/rowv", stderr()) ################################################### DEBUG ##
     colv <- get_colv()
     rowv <- get_rowv()
-    write("get_dist", stderr()) ################################################# DEBUG ##
     
-    write(object.size(x), stderr()) ############################################# DEBUG ##
     if(is.null(data))
       return(NULL)
-    
+  	write("start cluster", stderr()) ################################################### DEBUG ##
     # cluster rows
     if(rowv){
+    	write("table rowv", stderr()) ################################################### DEBUG ##
       row <- get_hclust(data)
       data <- data[row$order,]
     }
     
     # cluster cols
     if(colv){
-      
+    	write("table colv", stderr()) ################################################### DEBUG ##
       # only cluster cols with numbers
       nums <- sapply(data, is.numeric)
       numericCols <- data[,nums]
       nonNums <- !sapply(data, is.numeric)
       omittedCols <- data[,nonNums]
       
-      col <- get_hclust(t(data))
+      col <- get_hclust(t(numericCols))
+      
+      write("cbind2", stderr()) ################################################### DEBUG ##
       data <- cbind2(omittedCols, numericCols[,col$order])
     }
-    
+  	write("return(data)", stderr()) ################################################### DEBUG ##
     return(data)
   }
   
@@ -264,10 +267,11 @@ shinyServer(function(input, output,session) {
   ################# Display Table ################# 
   output$dataTable <- renderTable({
     fileData <- get_table_data()
+    write("renderTable", stderr()) ################################################### DEBUG ##
     if(is.null(fileData)){
       return(NULL)
     }
-    y <- fileData
+    return(fileData)
   })
 
   ################# Display Heatmap ################# 
@@ -283,30 +287,22 @@ shinyServer(function(input, output,session) {
 
   ################# Save File As Table ################# 
   output$downloadTable <- downloadHandler(
-    filename = function (){
-    	return("cluster_files.zip")},
+    filename = "cluster_files.zip",
+    
     content = function(file) {
-    	tmpdir <- tempdir()
-    	setwd(tempdir())
-    	print(tempdir())
     	data <- get_data_matrix()
     	fs <- c("text_file.txt")
     	write.table(get_table_data(), "text_file.txt", sep = input$sepSave)
-    	if(get_colv() || get_rowv()){
-    		r2cdt(hr=get_hclust(data),hc=get_hclust(t(data)),data,labels=FALSE,description=FALSE,file="cluster.cdt",dec='.')
-    		fs <- c(fs, "cluster.cdt")
-    	}
-    	if(get_colv()){
+    	
+    	if(input$clusterMethod != 'none'){
+    		fs <- c(fs, "cluster.cdt", "cluster.atr", "cluster.gtr")
+    		r2cdt(hr=get_hclust(data), hc=get_hclust(t(data)),data=data,labels=FALSE,description=FALSE,file="cluster.cdt",dec='.')
     		r2atr(hc=get_hclust(t(data)),file="cluster.atr",distance=input$distanceMethod,dec='.',digits=5)
-    		fs <- c(fs, "cluster.atr")
-    	}
-    	if(get_rowv()){
     		r2gtr(hr=get_hclust(data),file="cluster.gtr",distance=input$distanceMethod,dec='.',digits=5)
-    		fs <- c(fs, "cluster.gtr")
     	}
     	zip(zipfile=file, files=fs)
   	}
-    )
+  )
   
   ################# Save File As Image ################# 
   output$downloadHeatmap <- downloadHandler(
