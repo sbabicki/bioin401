@@ -96,8 +96,8 @@ shinyUI(navbarPage(position = "fixed-top", theme = "theme.css",
             selectInput("distanceMethod", label = "Distance Measurement Method", 
                         choices = list( 
                           "euclidean" = 'euclidean',
-                          "manhattan" = 'manhattan', #aka city block
-                          "pearson" = 'pearson'), 
+                          "manhattan" = 'manhattan'), #aka city block
+                          #"pearson" = 'pearson'), 
                         selected = 'none'), 
             
             radioButtons('display', 'Display As',

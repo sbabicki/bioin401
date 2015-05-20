@@ -120,12 +120,13 @@ shinyServer(function(input, output,session) {
   ################# get_dist #################
   # calculates a distance matrix 
   get_dist <- function(x){
-  	if(input$distanceMethod == 'pearson'){
-  		return(pearson.dist(x))
-  	}
-  	else{
+  	
+  	#if(input$distanceMethod == 'pearson'){
+  	#	return(pearson.dist(x))
+  	#}
+  	#else{
   		return(dist(x, method = input$distanceMethod))
-  	}
+  	#}
   }
   
   ################# get_hclust #################
