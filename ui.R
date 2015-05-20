@@ -24,7 +24,7 @@ shinyUI(navbarPage(position = "fixed-top", theme = "theme.css",
                     top = "70px", left = 0, width="100%",
                     draggable = FALSE,
                     fixed = FALSE,
-                    tableOutput('dataTable'))),
+                    dataTableOutput('dataTable'))),
 
     ##########  Options Menu ##########   
     absolutePanel(style = "z-index:10000;", id="dropdownMenu", 

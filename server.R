@@ -276,7 +276,7 @@ shinyServer(function(input, output,session) {
   ########################################### OUTPUT ###########################################
   
   ################# Display Table ################# 
-  output$dataTable <- renderTable({
+  output$dataTable <- renderDataTable({
     fileData <- get_table_data()
     write("renderTable", stderr()) ################################################### DEBUG ##
     if(is.null(fileData)){
