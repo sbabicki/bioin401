@@ -210,7 +210,7 @@ shinyServer(function(input, output,session) {
     # https://mintgene.wordpress.com/2012/01/27/heatmaps-controlling-the-color-representation-with-set-data-range/
     if(input$scale == "none"){
       quantile.range <- quantile(na.rm = TRUE, heatmapDataMatrix, probs = seq(0, 1, 0.01))
-      breaks <- seq(quantile.range["5%"], quantile.range["95%"], 0.1)
+      breaks <- seq(quantile.range[0+input$brightness], quantile.range[100-input$brightness], 0.1)
       my_palette <- colorRampPalette(c(input$startColour, "black", input$endColour))
     }
     else{
