@@ -125,7 +125,11 @@ shinyServer(function(input, output,session) {
   	#	return(pearson.dist(x))
   	#}
   	#else{
-  		return(dist(x, method = input$distanceMethod))
+  	write("GET_DIST MEM_CHANGE", stderr()) ################################################### DEBUG ##
+  	print(mem_change(x <- dist(x, method = input$distanceMethod)))
+  	return(x)
+  	
+  	
   	#}
   }
   
@@ -133,7 +137,7 @@ shinyServer(function(input, output,session) {
   # uses hclust to cluster data using get_dist distance matrix
   get_hclust <- function(x){
 
-		write("get_dist x", stderr()) ################################################### DEBUG ##
+		#write("get_dist x", stderr()) ################################################### DEBUG ##
 		x <- get_dist(x)
 		write(object.size(x), stderr()) ############################################# DEBUG ##
 		
@@ -210,12 +214,15 @@ shinyServer(function(input, output,session) {
     # https://mintgene.wordpress.com/2012/01/27/heatmaps-controlling-the-color-representation-with-set-data-range/
     if(input$scale == "none"){
       quantile.range <- quantile(na.rm = TRUE, heatmapDataMatrix, probs = seq(0, 1, 0.01))
-      breaks <- seq(quantile.range[0+input$brightness], quantile.range[100-input$brightness], 0.1)
+      low_cutoff <- quantile.range[1+input$brightness]
+      high_cutoff <- quantile.range[101-input$brightness]
+      breaks <- seq(low_cutoff, high_cutoff, (high_cutoff - low_cutoff)/input$binSlider)
+      
       my_palette <- colorRampPalette(c(input$startColour, "black", input$endColour))
     }
     else{
-      my_palette <- colorRampPalette(c(input$startColour, "black", input$endColour))(n = input$binSlider)
-      breaks <- NULL
+      my_palette <- colorRampPalette(c(input$startColour, "black", input$endColour))
+      breaks <- input$binSlider
     }
 		write("heatmap_data_matrix", stderr()) ######################################## DEBUG ##
 		write(object.size(heatmapDataMatrix), stderr()) ############################### DEBUG ##
