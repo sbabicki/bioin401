@@ -96,6 +96,7 @@ shinyUI(navbarPage(position = "fixed-top", theme = "theme.css",
             selectInput("distanceMethod", label = "Distance Measurement Method", 
                         choices = list( 
                           "euclidean" = 'euclidean',
+                          "squared euclidean" = 'squared euclidean',
                           "manhattan" = 'manhattan'), #aka city block
                           #"pearson" = 'pearson'), 
                         selected = 'none'), 

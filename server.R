@@ -121,12 +121,12 @@ shinyServer(function(input, output,session) {
   # calculates a distance matrix 
   get_dist <- function(x){
   	
-  	#if(input$distanceMethod == 'pearson'){
-  	#	return(pearson.dist(x))
-  	#}
-  	#else{
-  	write("GET_DIST MEM_CHANGE", stderr()) ################################################### DEBUG ##
-  	print(mem_change(x <- dist(x, method = input$distanceMethod)))
+  	if(input$distanceMethod == 'squared euclidean'){
+  		x <- dist(x, method = "euclidean")^2
+  	}
+  	else{
+  		x <- dist(x, method = input$distanceMethod)
+  	}
   	return(x)
   	
   	
