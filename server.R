@@ -2,7 +2,7 @@ library(shiny)
 library(gplots)
 library(ctc)
 library(pryr)
-#library(hyperSpec)
+
 
 # setwd("~/")
 # runApp("bioin401")
@@ -120,24 +120,20 @@ shinyServer(function(input, output,session) {
   ################# get_dist #################
   # calculates a distance matrix 
   get_dist <- function(x){
-  	
-  	if(input$distanceMethod == 'squared euclidean'){
-  		x <- dist(x, method = "euclidean")^2
+  	if(input$distanceMethod == 'euclidean' || input$distanceMethod == 'manhattan'){
+			x <- dist(x, method = input$distanceMethod)
   	}
   	else{
-  		x <- dist(x, method = input$distanceMethod)
+  		x <- as.dist(1-cor(t(x), method=input$distanceMethod))
   	}
   	return(x)
-  	
-  	
-  	#}
   }
   
   ################# get_hclust #################
   # uses hclust to cluster data using get_dist distance matrix
   get_hclust <- function(x){
 
-		#write("get_dist x", stderr()) ################################################### DEBUG ##
+		write("get_dist x", stderr()) ################################################### DEBUG ##
 		x <- get_dist(x)
 		write(object.size(x), stderr()) ############################################# DEBUG ##
 		
