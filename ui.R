@@ -86,11 +86,11 @@ shinyUI(navbarPage(position = "fixed-top", theme = "theme.css",
             
             conditionalPanel(condition = "input.clusterMethod != \'none\'", 
                              strong("Apply Clustering To"),
-                             checkboxInput('rowv', 'Rows', FALSE),
+                             checkboxInput('rowv', 'Rows', TRUE),
                              checkboxInput('colv', 'Columns', FALSE),
                         conditionalPanel(condition = "input.display == 'heatmap'",
                              strong("Show Dendrogram"),
-                             checkboxInput('dendRow', 'Rows', FALSE),
+                             checkboxInput('dendRow', 'Rows', TRUE),
                              checkboxInput('dendCol', 'Columns', FALSE))),
             
             selectInput("distanceMethod", label = "Distance Measurement Method", 

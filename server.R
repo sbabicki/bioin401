@@ -2,7 +2,7 @@ library(shiny)
 library(gplots)
 library(ctc)
 library(pryr)
-
+library(hybridHclust)
 
 # setwd("~/")
 # runApp("bioin401")
@@ -42,7 +42,7 @@ shinyServer(function(input, output,session) {
     # data frame with 'name', 'size', 'type', and 'datapath' columns. 
     # 'datapath' column contains the local filenames where the data can be found.
     else{  
-      data <- read.csv(path, header=TRUE, sep=sep)
+      data <- read.delim(path, header=TRUE, sep=sep)
       if(input$display == "heatmap")
         data <- remove_strings(data)
     }
@@ -120,11 +120,18 @@ shinyServer(function(input, output,session) {
   ################# get_dist #################
   # calculates a distance matrix 
   get_dist <- function(x){
+  	print(class(x))
+  	
+  	# source http://stackoverflow.com/questions/15773189/remove-na-nan-inf-in-a-matrix
+  	# replace all non-finite values with 0
+  	x[!rowSums(!is.finite(x)),]
+  	x[!is.finite(x)] <- 0
+  	
   	if(input$distanceMethod == 'euclidean' || input$distanceMethod == 'manhattan'){
 			x <- dist(x, method = input$distanceMethod)
   	}
   	else{
-  		x <- as.dist(1-cor(t(x), method=input$distanceMethod))
+  		x <- as.dist(1-cor(t(data.matrix(x)), method=input$distanceMethod))
   	}
   	return(x)
   }
@@ -132,7 +139,7 @@ shinyServer(function(input, output,session) {
   ################# get_hclust #################
   # uses hclust to cluster data using get_dist distance matrix
   get_hclust <- function(x){
-
+		
 		write("get_dist x", stderr()) ################################################### DEBUG ##
 		x <- get_dist(x)
 		write(object.size(x), stderr()) ############################################# DEBUG ##
@@ -166,7 +173,7 @@ shinyServer(function(input, output,session) {
     # cluster rows
     if(rowv){
     	write("table rowv", stderr()) ################################################### DEBUG ##
-      row <- get_hclust(data)
+      row <- get_hclust(data.matrix(data))
       data <- data[row$order,]
     }
     
@@ -200,7 +207,7 @@ shinyServer(function(input, output,session) {
     
     # get the data matrix to convert to heatmap
     heatmapDataMatrix <- get_data_matrix()
-    colv <- get_colv()
+		colv <- get_colv()
     rowv <- get_rowv()
     dendrogram <- get_dendrogram()
     if(is.null(heatmapDataMatrix))
