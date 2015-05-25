@@ -317,27 +317,29 @@ shinyServer(function(input, output,session) {
     filename = "example.txt",
     content = function(file) {write.csv(read.csv(input$exampleFiles, header=TRUE, sep=input$sep), file)})
 
-  ################# Save File As Table ################# 
-  output$downloadTable <- downloadHandler(
-    filename = "cluster_files.zip",
-    
-    content = function(file) {
-    	data <- get_data_matrix()
+	################# Save File As Table ################# 
+	output$downloadTable <- downloadHandler(
+		filename = "data.txt",
+		
+		content = function(file) {
+			
+			write.table(x = get_table_data(), sep = input$sepSave, file = file)
+#			data <- get_data_matrix()
+			
+#			save_wd <- getwd()
+#			setwd(tempdir())
+			
+#			fs <- c("text_file.txt")
+#			write.table(get_table_data(), "text_file.txt", sep = input$sepSave)
     	
-    	save_wd <- getwd()
-    	setwd(tempdir())
-    	
-    	fs <- c("text_file.txt")
-    	write.table(get_table_data(), "text_file.txt", sep = input$sepSave)
-    	
-    	if(input$clusterMethod != 'none'){
-    		fs <- c(fs, "cluster.cdt", "cluster.atr", "cluster.gtr")
-    		r2cdt(hr=get_hclust(data), hc=get_hclust(t(data)),data=data,labels=FALSE,description=FALSE,file="cluster.cdt",dec='.')
-    		r2atr(hc=get_hclust(t(data)),file="cluster.atr",distance=input$distanceMethod,dec='.',digits=5)
-    		r2gtr(hr=get_hclust(data),file="cluster.gtr",distance=input$distanceMethod,dec='.',digits=5)
-    	}
-    	zip(zipfile=file, files=fs)
-    	setwd(save_wd)
+#			if(input$clusterMethod != 'none'){
+#				fs <- c(fs, "cluster.cdt", "cluster.atr", "cluster.gtr")
+#				r2cdt(hr=get_hclust(data), hc=get_hclust(t(data)),data=data,labels=FALSE,description=FALSE,file="cluster.cdt",dec='.')
+#				r2atr(hc=get_hclust(t(data)),file="cluster.atr",distance=input$distanceMethod,dec='.',digits=5)
+#				r2gtr(hr=get_hclust(data),file="cluster.gtr",distance=input$distanceMethod,dec='.',digits=5)
+#    	}
+#			zip(zipfile=file, files=fs)
+#    	setwd(save_wd)
   	}
   )
   
