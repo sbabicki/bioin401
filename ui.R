@@ -134,7 +134,7 @@ shinyUI(navbarPage(position = "fixed-top", theme = "theme.css",
                         "Width (in px)",
                         min = 760, max = 1500, value = 800),
            
-           checkboxInput('previewFullSize', 'Preview Full Height', FALSE),
+           checkboxInput('previewFullSize', 'Preview Full Height (not recomended for large files)', FALSE),
            conditionalPanel(condition = "input.previewFullSize == 0",
                 sliderInput("heightSlider",
                           "Height (in px)",

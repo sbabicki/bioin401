@@ -323,6 +323,10 @@ shinyServer(function(input, output,session) {
     
     content = function(file) {
     	data <- get_data_matrix()
+    	
+    	save_wd <- getwd()
+    	setwd(tempdir())
+    	
     	fs <- c("text_file.txt")
     	write.table(get_table_data(), "text_file.txt", sep = input$sepSave)
     	
@@ -333,6 +337,7 @@ shinyServer(function(input, output,session) {
     		r2gtr(hr=get_hclust(data),file="cluster.gtr",distance=input$distanceMethod,dec='.',digits=5)
     	}
     	zip(zipfile=file, files=fs)
+    	setwd(save_wd)
   	}
   )
   
