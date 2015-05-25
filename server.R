@@ -2,7 +2,6 @@ library(shiny)
 library(gplots)
 library(ctc)
 library(pryr)
-library(hybridHclust)
 
 # setwd("~/")
 # runApp("bioin401")
@@ -268,19 +267,31 @@ shinyServer(function(input, output,session) {
 		graphics.off()
   }
 
-  ################# get_height ################# 
-  # calculate the height based on matrix dimentions and current width
-  get_height<-function(cond, x){
-    x<-get_data_matrix()
-    if(is.null(x))
-      return(0)
-    else{
-      if(cond)
-        size <- input$widthSlider/ncol(x) * nrow(x)
-      else
-        size <- input$heightSlider
-      return(size)
-    }
+	################# get_height ################# 
+	# calculate the height based on matrix dimentions and current width
+	get_height<-function(cond){
+		x <- get_file()
+		if(is.null(x)){
+			return(0)
+		}
+		else{
+			if(cond){
+				size <- input$widthSlider/ncol(x) * nrow(x)
+			}
+			else{
+				size <- input$heightSlider
+			}
+			return(size)
+		}
+  }
+  
+	################# get_width ################# 
+  get_width <- function(){
+  	return(input$widthSlider)
+  }
+  
+  get_res <- function(){
+  	return(input$resSlider)
   }
 
   ########################################### OUTPUT ###########################################
@@ -299,7 +310,7 @@ shinyServer(function(input, output,session) {
   output$heatmap <- renderPlot(
       get_heatmap(), 
       height=reactive({get_height(input$previewFullSize)}), 
-      width=reactive({input$widthSlider}))
+      width=reactive({get_width()}))
    
   ################# Save Example File ################# 
   output$downloadExample <- downloadHandler(
@@ -332,13 +343,11 @@ shinyServer(function(input, output,session) {
     
     content = function(file) {
       if(input$downloadFormat == "pdf"){
-        pdf(file, width=input$widthSlider/72, height=get_height(input$downloadFullSize)/72)
+        pdf(file, width=get_width()/72, height=get_height(input$downloadFullSize)/72)
       }
       else{
-        png(file, units="in", width = input$widthSlider/72, height=get_height(input$downloadFullSize)/72, res=input$resSlider,type = "cairo")            
+      	png(file, units="in", width = get_width()/72, height=get_height(input$downloadFullSize)/72, res=get_res(), type="cairo")	
       }
-  
-      get_heatmap() 
-      
+      get_heatmap()
     }) 
   })
