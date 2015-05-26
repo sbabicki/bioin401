@@ -319,27 +319,29 @@ shinyServer(function(input, output,session) {
 
 	################# Save File As Table ################# 
 	output$downloadTable <- downloadHandler(
-		filename = "data.txt",
+		filename = "data.zip",
 		
 		content = function(file) {
 			
-			write.table(x = get_table_data(), sep = input$sepSave, file = file)
-#			data <- get_data_matrix()
+#			write.table(x = get_table_data(), sep = input$sepSave, file = file)
+			data <- get_data_matrix()
 			
-#			save_wd <- getwd()
-#			setwd(tempdir())
+			save_wd <- getwd()
+			setwd(tempdir())
 			
-#			fs <- c("text_file.txt")
-#			write.table(get_table_data(), "text_file.txt", sep = input$sepSave)
+			fs <- c("text_file.txt")
+			write.table(data, "text_file.txt", sep = input$sepSave)
     	
-#			if(input$clusterMethod != 'none'){
-#				fs <- c(fs, "cluster.cdt", "cluster.atr", "cluster.gtr")
-#				r2cdt(hr=get_hclust(data), hc=get_hclust(t(data)),data=data,labels=FALSE,description=FALSE,file="cluster.cdt",dec='.')
-#				r2atr(hc=get_hclust(t(data)),file="cluster.atr",distance=input$distanceMethod,dec='.',digits=5)
-#				r2gtr(hr=get_hclust(data),file="cluster.gtr",distance=input$distanceMethod,dec='.',digits=5)
-#    	}
-#			zip(zipfile=file, files=fs)
-#    	setwd(save_wd)
+			if(input$clusterMethod != 'none'){
+				fs <- c(fs, "cluster.cdt", "cluster.atr", "cluster.gtr")
+				hr <- get_hclust(data)
+				hc <- get_hclust(t(data))
+				r2cdt(hr=hr, hc=hc,data=data,labels=FALSE,description=FALSE,file="cluster.cdt",dec='.')
+				r2atr(hc=hc,file="cluster.atr",distance=input$distanceMethod,dec='.',digits=5)
+				r2gtr(hr=hr,file="cluster.gtr",distance=input$distanceMethod,dec='.',digits=5)
+    	}
+			zip(zipfile=file, files=fs)
+    	setwd(save_wd)
   	}
   )
   
