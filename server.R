@@ -256,7 +256,7 @@ shinyServer(function(input, output,session) {
               col=my_palette, scale=input$scale, na.color=input$missingDataColour,
               key=FALSE, symkey=FALSE, density.info="none", trace="none", 
               Rowv = row, Colv = col, dendrogram = dendrogram, 
-              keysize=0.5, cexRow=input$cexRow, #cellnote=heatmapDataMatrix,
+              keysize=0.5, cexRow=input$cexRow,
               main=input$imageTitle, xlab=input$xaxis, ylab=input$yaxis, 
               offsetCol = 0, offsetRow = 0, 
               margins=c(5,10), lhei=c(1,8), lwid=c(0.1,0.5), breaks = breaks 
