@@ -10,8 +10,11 @@ library(pryr)
 # shinyapps::terminateApp('bioin401')
 # https://www.shinyapps.io/admin/#/dashboard
 
-#max upload size is 4MB
+# max upload size is 4MB
 options(shiny.maxRequestSize=4*1024^2)
+
+# source: bit.ly/1Q8CPL2
+Sys.setenv(R_ZIPCMD="/usr/bin/zip")
 
 shinyServer(function(input, output,session) {
 
