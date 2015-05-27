@@ -1,4 +1,0 @@
-brightness
-units for hight and width
-change colour of buttons
-text for click here to expand

@@ -72,7 +72,7 @@ shinyUI(navbarPage(position = "fixed-top", theme = "theme.css",
 
           ########## Data tab ##########  
           tabPanel(title = "Analysis",
-            h3("Analysis:"),
+            h3("Analyze Data:"),
             
             selectInput("clusterMethod", label = "Clustering Method", 
                         choices = list( 
@@ -102,25 +102,20 @@ shinyUI(navbarPage(position = "fixed-top", theme = "theme.css",
                           "manhattan" = 'manhattan'), #aka city block
                         selected = 'none'), 
             
+          	h3("Display Options:"),
             radioButtons('display', 'Display As',
                          c("Heatmap"='heatmap', "Table"='table'),
                          'heatmap')
             
             ),  
-                 
-                 
+      	
+      	
           ########## Customize image tab ##########
           tabPanel(title =  "Image",
-            h3("Customize Image:"),
+            h3("Size Options:"),
             
           conditionalPanel(condition = "input.display == 'heatmap'",  
-           selectInput("scale", label = "Scale Type", 
-                         choices = list(
-                         "row" = 'row',
-                         "column" = 'column',
-                         "none"='none'),
-                          selected = 'none'),       
-           
+              
            selectInput("cexRow", label = "Row Label Size",
                         choices = list(
                         "extra large" = 2,
@@ -128,7 +123,8 @@ shinyUI(navbarPage(position = "fixed-top", theme = "theme.css",
                         "medium" = 0.5,
                         "small" = 0.25,
                         "extra small" = 0.125),
-                         selected=1),            
+                         selected=1),
+                       
             
             sliderInput("widthSlider",
                         "Width (in px)",
@@ -140,7 +136,12 @@ shinyUI(navbarPage(position = "fixed-top", theme = "theme.css",
                           "Height (in px)",
                           min = 600, max = 2000, value = 700)
             ),
+          	
+          	
+          	h3("Colour Options:"),
+          	 
             
+          	
             selectInput("startColour", label = "Low Colour", 
                         choices = list(
                           "green" = 'green',
@@ -175,13 +176,22 @@ shinyUI(navbarPage(position = "fixed-top", theme = "theme.css",
 							sliderInput("brightness",
 													"Brightness",
 													min = 1, max = 45, value = 5)),
+          	selectInput("scale", label = "Scale Type", 
+                         choices = list(
+                         "row" = 'row',
+                         "column" = 'column',
+                         "none"='none'),
+                          selected = 'none')
             
-            textInput("imageTitle", label = "Title", value = ""),
-            textInput("xaxis", label = "X Axis Label", value = ""),
-            textInput("yaxis", label = "Y Axis Label", value = ""))),
-          
+            )),   
+      	
           ########## Save options ##########  
           tabPanel(title = "Save",
+          	h3("Add Heatmap Labels:"),
+					
+					textInput("imageTitle", label = "Title", value = ""),
+					textInput("xaxis", label = "X Axis Label", value = ""),
+					textInput("yaxis", label = "Y Axis Label", value = ""),
             h3("Save Output As Heatmap:"),
             
               radioButtons('downloadFormat', 
