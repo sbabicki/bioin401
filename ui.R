@@ -1,70 +1,72 @@
 # ui.R
 
 shinyUI(navbarPage(position = "fixed-top", theme = "theme.css",
+	title = "Heatmap App",
+	
+	#################### Analysis Tab ####################  
+	tabPanel("Analysis",  
+		tags$script(type="text/javascript", src = "busy.js"),
+		div(class = "busy", includeHTML("www/spinner.html")),
+		
+		##########  Heatmap Plot Output ##########        
+		conditionalPanel(condition = "input.display == 'heatmap'", 
+			absolutePanel(id="heatmapPanel",
+				top = "70px", left = 0, width="100%",
+				draggable = FALSE,
+				fixed = FALSE,
+				plotOutput(outputId='heatmap'))),
 
-  title = "Heatmap App",
+		########## Table Output ##########
+		conditionalPanel(condition = "input.display == 'table'",
+			absolutePanel(id="tablePanel",
+				top = "70px", left = 0, width="100%",
+				draggable = FALSE,
+				fixed = FALSE,
+				dataTableOutput('dataTable'))),
 
-  #################### Analysis Tab ####################  
-  tabPanel("Analysis",  
-    tags$script(type="text/javascript", src = "busy.js"),
-    div(class = "busy", includeHTML("www/spinner.html")),
-
-    ##########  Heatmap Plot Output ##########        
-    conditionalPanel(condition = "input.display == 'heatmap'", 
-      absolutePanel(id="heatmapPanel",
-                    top = "70px", left = 0, width="100%",
-                    draggable = FALSE,
-                    fixed = FALSE,
-                    plotOutput(outputId='heatmap')
-                     )),
-    
-    ########## Table Output ##########
-    conditionalPanel(condition = "input.display == 'table'",
-      absolutePanel(id="tablePanel",
-                    top = "70px", left = 0, width="100%",
-                    draggable = FALSE,
-                    fixed = FALSE,
-                    dataTableOutput('dataTable'))),
-
-    ##########  Options Menu ##########   
-    absolutePanel(style = "z-index:10000;", id="dropdownMenu", 
-                  top = 0, right = 0, width="360px", 
-                  draggable = FALSE,  
-                  fixed=TRUE,
-                  
-    ########## Option Menu Button ##########                
-    actionButton("showOptionsButton", label = h4("Toggle Options Menu")),
-    conditionalPanel(condition = "input.showOptionsButton%2 == 0", 
-      tags$div(id = "optionsMenu", 
-      tabsetPanel(
-        
-        ########## File input tab ##########  
-        tabPanel(title = "File Input",
-            h3("File Input:"),
-            radioButtons("chooseInput",
-                         'Choose Input Type',
-                         c("Upload File" = 'fileUpload',
-                           "Example File" = 'examples'
-                           ),
-                         'fileUpload'),
-            
-            conditionalPanel(condition = "input.chooseInput == \'examples\'",
-              selectInput("exampleFiles", label = "Choose Example File", 
-                        choices = list(
-                          "Example 1" = 'example_input/example1.txt',
-                          "Example 2" = 'example_input/example2.txt',
-                          "Example 3" = 'example_input/example3.txt'),
-                        selected = 1),
-              tags$div(class="exampleInfo", 
-                       conditionalPanel(condition = "input.exampleFiles == \'example_input/example1.txt\'",includeHTML("www/example1info.html")),
-                       conditionalPanel(condition = "input.exampleFiles == \'example_input/example2.txt\'",includeHTML("www/example2info.html")),
-                       conditionalPanel(condition = "input.exampleFiles == \'example_input/example3.txt\'",includeHTML("www/example3info.html"))),
-              downloadButton(class='btn-info', outputId='downloadExample', label='Download Example Text File')),  
-            
-            conditionalPanel(condition = "input.chooseInput == \'fileUpload\'",
-              fileInput('file',
-                      'Upload File (4MB maximum file size)',
-                      accept=c('text/csv','text/comma-separated-values,text/plain','.csv')),
+		##########  Options Menu ########## 
+		absolutePanel(style = "z-index:10000;", id="dropdownMenu",
+			top = 0, right = 0, width="360px",
+			draggable = FALSE,
+			fixed=TRUE,
+			
+			########## Option Menu Button ##########
+			actionButton("showOptionsButton", label = h4("Toggle Options Menu")),
+			conditionalPanel(condition = "input.showOptionsButton%2 == 0",
+				tags$div(id = "optionsMenu",
+					
+					tabsetPanel(
+						########## File input tab ##########
+						tabPanel(title = "File Input",
+							
+							h3("File Input:"),
+							
+							radioButtons("chooseInput",
+								label = "Choose Input Type",
+								choices = c(
+									"Upload File" = 'fileUpload',
+									"Example File" = 'examples'),
+								selected = 'fileUpload'),
+							
+							conditionalPanel(condition = "input.chooseInput == \'examples\'",
+								selectInput("exampleFiles", 
+									label = "Choose Example File",
+									choices = c(
+										"Example 1" = 'example_input/example1.txt',
+										"Example 2" = 'example_input/example2.txt',
+										"Example 3" = 'example_input/example3.txt'),
+									selected = 1),
+								
+								tags$div(class="exampleInfo",
+									conditionalPanel(condition = "input.exampleFiles == \'example_input/example1.txt\'", includeHTML("www/example1info.html")),
+									conditionalPanel(condition = "input.exampleFiles == \'example_input/example2.txt\'", includeHTML("www/example2info.html")),
+									conditionalPanel(condition = "input.exampleFiles == \'example_input/example3.txt\'", includeHTML("www/example3info.html"))),
+								
+								downloadButton(class = "btn-info", outputId = "downloadExample", label = "Download Example Text File")),  
+							
+							conditionalPanel(condition = "input.chooseInput == \'fileUpload\'",
+								fileInput("file",
+									label = "Upload File (4MB maximum file size)"),
               radioButtons('sep', 
                            'File separator',
                            c(Tab='\t', Comma=',', Semicolon=';'),
@@ -151,14 +153,7 @@ shinyUI(navbarPage(position = "fixed-top", theme = "theme.css",
                           "blue" = 'blue',
                           "purple" = 'purple'),
                         selected = 1),
-            
-            selectInput("missingDataColour", label = "Missing Data Colour", 
-                        choices = list( 
-                          "black" = 'black',
-                          "grey" = 'grey',
-                          "white" = 'white'),
-                        selected = 1),
-            
+          	
             selectInput("endColour", label = "High Colour", 
                         choices = list( 
                           "red" = '#FF0000',
@@ -167,6 +162,14 @@ shinyUI(navbarPage(position = "fixed-top", theme = "theme.css",
                           "green" = 'green', 
                           "blue" = 'blue',
                           "purple" = 'purple'),
+                        selected = 1),
+          	
+            
+            selectInput("missingDataColour", label = "Missing Data Colour", 
+                        choices = list( 
+                          "black" = 'black',
+                          "grey" = 'grey',
+                          "white" = 'white'),
                         selected = 1),
 						
            sliderInput("binSlider",

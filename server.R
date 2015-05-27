@@ -222,13 +222,14 @@ shinyServer(function(input, output,session) {
       low_cutoff <- quantile.range[1+input$brightness]
       high_cutoff <- quantile.range[101-input$brightness]
       breaks <- seq(low_cutoff, high_cutoff, (high_cutoff - low_cutoff)/input$binSlider)
-      
-      my_palette <- colorRampPalette(c(input$startColour, "black", input$endColour))
     }
     else{
-      my_palette <- colorRampPalette(c(input$startColour, "black", input$endColour))
       breaks <- input$binSlider
     }
+  	
+  	my_palette <- colorRampPalette(c(input$startColour, "black", input$endColour))
+  	
+  	
 		write("heatmap_data_matrix", stderr()) ######################################## DEBUG ##
 		write(object.size(heatmapDataMatrix), stderr()) ############################### DEBUG ##
 
@@ -318,7 +319,7 @@ shinyServer(function(input, output,session) {
   ################# Save Example File ################# 
   output$downloadExample <- downloadHandler(
     filename = "example.txt",
-    content = function(file) {write.csv(read.csv(input$exampleFiles, header=TRUE, sep=input$sep), file)})
+    content = function(file) {write.table(read.delim(input$exampleFiles, header=TRUE, sep="\t"), sep = "\t",  file)})
 
 	################# Save File As Table ################# 
 	output$downloadTable <- downloadHandler(
