@@ -2,6 +2,7 @@ library(shiny)
 library(gplots)
 library(ctc)
 library(pryr)
+source("helpers.R")
 
 # max upload size is 4MB
 options(shiny.maxRequestSize=4*1024^2)
@@ -315,12 +316,23 @@ shinyServer(function(input, output,session){
 			write.table(data, "text_file.txt", sep = input$sepSave)
     	
 			if(input$clusterMethod != 'none'){
-				fs <- c(fs, "cluster.cdt", "cluster.atr", "cluster.gtr")
-				hr <- get_hclust(data)
-				hc <- get_hclust(t(data))
-				r2cdt(hr=hr, hc=hc,data=data,labels=FALSE,description=FALSE,file="cluster.cdt",dec='.')
-				r2atr(hc=hc,file="cluster.atr",distance=input$distanceMethod,dec='.',digits=5)
-				r2gtr(hr=hr,file="cluster.gtr",distance=input$distanceMethod,dec='.',digits=5)
+				
+				hr <- NULL
+				hc <- NULL
+				
+				if(get_rowv()){
+					fs <- c(fs, "cluster.gtr")
+					hr <- get_hclust(data)
+					r2gtr(hr=hr,file="cluster.gtr",distance=input$distanceMethod,dec='.',digits=5)
+				}
+				if(get_colv()){
+					fs <- c(fs,"cluster.atr")
+					hc <- get_hclust(t(data))
+					r2atr(hc=hc,file="cluster.atr",distance=input$distanceMethod,dec='.',digits=5)
+				}
+				fs <- c(fs, "cluster.cdt")
+				r2cdt2(hr=hr,hc=hc,data=data,labels=FALSE,description=FALSE,file="cluster.cdt",dec='.')
+
     	}
 			zip(zipfile=file, files=fs)
     	setwd(save_wd)
