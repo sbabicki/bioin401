@@ -15,7 +15,8 @@ shinyUI(navbarPage(position = "fixed-top", theme = "theme.css",
 				top = "70px", left = 0, width="100%",
 				draggable = FALSE,
 				fixed = FALSE,
-				plotOutput(outputId='heatmap'))),
+				#div(class = "openingMessage", includeHTML(path = "www/index.html")),
+				plotOutput(outputId='heatmap'))), 
 
 		########## Table Output ##########
 		conditionalPanel(condition = "input.display == 'table'",
@@ -26,6 +27,7 @@ shinyUI(navbarPage(position = "fixed-top", theme = "theme.css",
 				fixed = FALSE,
 				dataTableOutput('dataTable'))),
 
+		
 		##########  Options Menu ########## 
 		absolutePanel(style = "z-index:10000;", id="dropdownMenu",
 			top = 0, right = 0, width="360px",
