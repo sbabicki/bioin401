@@ -303,6 +303,13 @@ shinyServer(function(input, output,session){
 		content = function(file){
 			write.table(read.delim(input$exampleFiles, header=TRUE, sep="\t"), sep = "\t",  file)})
 	
+	################# Print Opening Message #################
+	output$openingMessage <- renderUI(
+		if(is.null(input$file) && input$chooseInput != 'examples') {
+			div(class = "openingMessage", includeHTML(path = "www/index.html"))
+		}
+	)
+	
 	################# Save File As Table ################# 
 	output$downloadTable <- downloadHandler(
 		filename = "data.zip",

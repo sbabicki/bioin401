@@ -15,7 +15,7 @@ shinyUI(navbarPage(position = "fixed-top", theme = "theme.css",
 				top = "70px", left = 0, width="100%",
 				draggable = FALSE,
 				fixed = FALSE,
-				#div(class = "openingMessage", includeHTML(path = "www/index.html")),
+				htmlOutput(outputId='openingMessage'),
 				plotOutput(outputId='heatmap'))), 
 
 		########## Table Output ##########
