@@ -280,21 +280,36 @@ shinyUI(navbarPage(position = "fixed-top", theme = "theme.css",
 	
 	#################### Instructions Tab ####################
 	tabPanel("Instructions",
-			navlistPanel(
+		navlistPanel(
 			"Features",
-			tabPanel("Overview", tags$div(class="myTabs", includeHTML("www/instructions.html"))),
+			tabPanel("Overview", class="myTabs", includeHTML("www/instructions.html")),
+			
 			"Sections",
-			tabPanel("Analysis",
-				tags$img(class = "myTabs", src="images/instructions/index.png", width="100%")),
+			tabPanel("Analysis", class = "myTabs",
+				tags$img(src="images/instructions/index.png", width="100%")),
+			
 			"Options Menu",
-			tabPanel("File Input", 
-				tags$img(class = "myTabs", src="images/instructions/file_input.png", width="100%")),
-			tabPanel("Analysis",
-				tags$img(class = "myTabs", src="images/instructions/analysis.png", width="100%")),
-			tabPanel("Image", 
-				tags$img(class = "myTabs", src="images/instructions/image.png", width="100%")), 
-			tabPanel("Save", 
-				tags$img(class = "myTabs", src="images/instructions/save.png", width="100%"))
+			tabPanel("File Input Tab", class = "myTabs",
+				tags$h1("File Input Tab"),
+				tags$img(src="images/instructions/file_input.png", width="100%"), 
+				tags$br(),
+				tags$br(),
+				tags$h1("When an example file is selected"),
+				tags$img(src="images/instructions/file_input_conditional.png", width="100%")),
+			
+			tabPanel("Analysis Tab", class = "myTabs",
+				tags$h1("Analysis Tab"),
+				tags$img(src="images/instructions/analysis.png", width="100%"),
+				tags$br(),
+				tags$br(),
+				tags$h1("When a linkage method is selected"),
+				tags$img(src="images/instructions/analysis_conditional.png", width="100%")),
+			
+			tabPanel("Image Tab", class = "myTabs", 
+				tags$img(src="images/instructions/image.png", width="100%")),
+			
+			tabPanel("Save Tab", class = "myTabs",
+				tags$img(src="images/instructions/save.png", width="100%"))
 			)),
 		#tags$div(class="myTabs", includeHTML("www/instructions.html"))),
 
