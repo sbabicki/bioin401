@@ -17,6 +17,16 @@
     float:right;
 }
 
+.well{
+    background-color:#E1E5E5 !important; 
+    float:right !important;
+    margin-top:80px; 
+}
+
+#testing {
+    position:right;
+    color:blue;
+}
 .myTabs {
     background-color:lightgrey; 
     padding:1em; 
@@ -41,6 +51,7 @@
     opacity:0.99;
     border-radius: 5px;
 }
+
 #optionsMenu {
     padding:1em;
     opacity: 0.92; 
@@ -6871,6 +6882,7 @@ input:focus,
   padding: 16px 24px;
 }
 .well {
+    
   -webkit-box-shadow: none;
   box-shadow: none;
 }
