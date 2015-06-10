@@ -354,10 +354,17 @@ shinyServer(function(input, output,session){
 		content = function(file) {
 			if(input$downloadFormat == "pdf"){
 				pdf(file, width=get_width()/72, height=get_height(input$downloadFullSize)/72)
+				get_heatmap()
 			}
 			else{
-				png(file, units="in", width = get_width()/72, height=get_height(input$downloadFullSize)/72, res=get_res(), type="cairo")	
+				tryCatch({
+					png(file, units="in", width = get_width()/72, height=get_height(input$downloadFullSize)/72, res=get_res())	
+					get_heatmap()
+				}, 
+				error = function(err){
+					validate(need(FALSE,"PNG image too large. Please decrease the dimensions or resolution of the image."))
+					return(NULL)
+				})
 			}
-			get_heatmap()
 		}) 
 })
