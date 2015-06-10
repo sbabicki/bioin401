@@ -1,7 +1,6 @@
 library(shiny)
 library(gplots)
 library(ctc)
-library(pryr)
 source("helpers.R")
 
 # max upload size is 4MB
