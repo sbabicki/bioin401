@@ -280,7 +280,23 @@ shinyUI(navbarPage(position = "fixed-top", theme = "theme.css",
 	
 	#################### Instructions Tab ####################
 	tabPanel("Instructions",
-		tags$div(class="myTabs", includeHTML("www/instructions.html"))),
+		navlistPanel(class = "myTabs",
+    "Features",
+    tabPanel("Overview", tags$div(class="myTabs", includeHTML("www/instructions.html"))),
+    "Sections",
+    tabPanel("Analysis", 
+    	tags$img(class = "myTabs", src="images/instructions/index.png", width="100%")),
+    "Options Menu",
+		tabPanel("File Input", 
+			tags$img(class = "myTabs", src="images/instructions/file_input.png", width="100%")),
+    tabPanel("Analysis", 
+    	tags$img(class = "myTabs", src="images/instructions/analysis.png", width="100%")),
+    tabPanel("Image", 
+    	tags$img(class = "myTabs", src="images/instructions/image.png", width="100%")), 
+		tabPanel("Save", 
+			tags$img(class = "myTabs", src="images/instructions/save.png", width="100%"))
+  )),
+		#tags$div(class="myTabs", includeHTML("www/instructions.html"))),
 
 	#################### Contact Tab ####################
 	tabPanel("Contact",
