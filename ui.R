@@ -281,12 +281,26 @@ shinyUI(navbarPage(position = "fixed-top", theme = "theme.css",
 	#################### Instructions Tab ####################
 	tabPanel("Instructions",
 		navlistPanel(
-			"Features",
-			tabPanel("Overview", class="myTabs", includeHTML("www/instructions.html")),
+			"Overview",
+			tabPanel("Site Summary", class = "myTabs" ),
+			tabPanel("List of Features", class="myTabs", includeHTML("www/instructions.html")),
 			
-			"Sections",
+			"Navigation Bar Sections",
 			tabPanel("Analysis", class = "myTabs",
-				tags$img(src="images/instructions/index.png", width="100%")),
+				tags$h1("Analysis Section"),
+				tags$img(src="images/instructions/nav_analysis.png", width="100%")),
+			
+			tabPanel("Gallery", class = "myTabs", 
+				tags$h1("Gallery Section"),
+				tags$img(src="images/instructions/nav_gallery.png", width="100%")),
+
+			tabPanel("Instructions", class = "myTabs",
+				tags$h1("Instructions Section"),
+				tags$img(src="images/instructions/nav_instructions.png", width="100%")),
+			
+			tabPanel("Contact", class = "myTabs", 
+				tags$h1("Contact Section"),
+				tags$img(src="images/instructions/nav_contact.png", width="100%")),
 			
 			"Options Menu",
 			tabPanel("File Input Tab", class = "myTabs",
@@ -302,16 +316,17 @@ shinyUI(navbarPage(position = "fixed-top", theme = "theme.css",
 				tags$img(src="images/instructions/analysis.png", width="100%"),
 				tags$br(),
 				tags$br(),
-				tags$h1("When a linkage method is selected"),
+				tags$h1("When a clustering method is selected"),
 				tags$img(src="images/instructions/analysis_conditional.png", width="100%")),
 			
 			tabPanel("Image Tab", class = "myTabs", 
+				tags$h1("Image Tab"),
 				tags$img(src="images/instructions/image.png", width="100%")),
 			
 			tabPanel("Save Tab", class = "myTabs",
+				tags$h1("Save Tab"),
 				tags$img(src="images/instructions/save.png", width="100%"))
 			)),
-		#tags$div(class="myTabs", includeHTML("www/instructions.html"))),
 
 	#################### Contact Tab ####################
 	tabPanel("Contact",
