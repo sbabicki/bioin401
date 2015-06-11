@@ -276,7 +276,64 @@ shinyUI(navbarPage(position = "fixed-top", theme = "theme.css",
 	
 	#################### Gallery Tab ####################
 	tabPanel("Gallery",
-		tags$div(class="myTabs", includeHTML("www/gallery.html"))), 
+		#tags$div(class="myTabs", includeHTML("www/gallery.html")),
+		navlistPanel(
+			"Overview of Examples", 
+			tabPanel("Introduction", class="myTabs", 
+				includeHTML("www/gallery.html")),
+			
+			tabPanel("All Gallery Examples", class="myTabs", 
+				tags$h1("Example 1: Clustering"),
+				tags$img(src="images/gallery/cluster.png", width="100%"), 
+				tags$br(),
+				tags$br(),
+				tags$br(),
+				tags$br(),
+				
+				tags$h1("Example 2: Changing Colours"),
+				tags$img(src="images/gallery/colour.png", width="100%"), 
+				tags$br(),
+				tags$br(),
+				tags$br(),
+				tags$br(),
+				
+				tags$h1("Example 3: Adjusting Size"),
+				tags$img(src="images/gallery/size.png", width="100%"),
+				tags$br(),
+				tags$br(),
+				tags$br(),
+				tags$br(),
+				
+				tags$h1("Example 4: Adding Labels"),
+				tags$img(src="images/gallery/labels.png", width="100%")
+				),
+			
+			"1. Clustering",
+			tabPanel("Final Result", class = "myTabs", 
+				tags$img(src="images/gallery/cluster.png", width="100%")),
+			tabPanel("Steps", class = "myTabs",
+				tags$img(src="images/gallery/cluster_settings.png", width="100%")), 
+			
+			"2. Changing Colours",
+			tabPanel("Final Result", class = "myTabs", 
+				tags$img(src="images/gallery/colour.png", width="100%")),
+			tabPanel("Steps", class = "myTabs", 
+				tags$img(src="images/gallery/colour_settings.png", width="100%")), 
+			
+			"3. Adjusting Size", 
+			tabPanel("Final Result", class = "myTabs", 
+				tags$img(src="images/gallery/size.png", width="100%")),
+			tabPanel("Steps", class = "myTabs", 
+				tags$img(src="images/gallery/size_settings.png", width="100%")), 
+			
+			"4. Adding Labels",
+			tabPanel("Final Result", class = "myTabs", 
+				tags$img(src="images/gallery/labels.png", width="100%")),
+			tabPanel("Steps", class = "myTabs", 
+				tags$img(src="images/gallery/labels_settings.png", width="100%"))
+			
+			
+		)), 
 	
 	#################### Instructions Tab ####################
 	tabPanel("Instructions",
